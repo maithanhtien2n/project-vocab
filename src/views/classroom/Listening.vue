@@ -1,0 +1,199 @@
+<script setup>
+import { ref, onMounted, watch } from "vue";
+import menuList from "@/components/menuList.vue";
+import { lessonEng } from "@/services/data";
+
+const lessonId = ref(2);
+
+const lessons = ref(lessonEng);
+const isTranslate = ref(true);
+const isListen = ref(true);
+const currentLessonMenu = ref(0);
+const currentLessonIndex = ref(0);
+const currentVocabIndex = ref(0);
+const currentLesson = ref(lessons.value[currentLessonIndex.value]);
+const currentStep = ref("lessonTitle");
+const score = ref(0);
+const answer = ref("");
+
+// const shuffle = (arr) => {
+//   return [...arr].sort(() => Math.random() - 0.5);
+// };
+
+// const shuffleArray = () => {
+//   lessons.value = lessons.value.map((item) => {
+//     return { ...item, vocab: shuffle(item.vocab) };
+//   });
+// };
+
+const scrollToLesson = (lessonId) => {
+  currentLessonMenu.value = lessonId;
+
+  const lessonIndex = lessons.value.findIndex(
+    (lesson) => lesson.id === lessonId
+  );
+
+  if (lessonIndex !== -1) {
+    currentLessonIndex.value = lessonIndex;
+    currentVocabIndex.value = 0;
+    currentLesson.value = lessons.value[currentLessonIndex.value];
+    currentStep.value = "lessonTitle";
+  }
+};
+
+const move = () => {
+  if (currentVocabIndex.value >= currentLesson.value.vocab.length) {
+    currentVocabIndex.value = 0;
+    currentLessonIndex.value += 1;
+    if (currentLessonIndex.value >= lessons.value.length) {
+      currentStep.value = "finish";
+    } else {
+      currentLesson.value = lessons.value[currentLessonIndex.value];
+      currentStep.value = "lessonTitle";
+      currentLessonMenu.value = currentLesson.value.id;
+    }
+  }
+};
+
+const nextStep = () => {
+  if (currentStep.value === "lessonTitle") {
+    currentStep.value = "vocab";
+  } else {
+    currentVocabIndex.value = 0;
+    currentVocabIndex.value += 1;
+    move();
+  }
+};
+
+const nextVocabStep = () => {
+  console.log("run");
+  if (
+    answer.value.toLowerCase() ===
+    currentLesson.value.vocab[currentVocabIndex.value].word.toLowerCase()
+  ) {
+    if (isTranslate) {
+      score.value += 2;
+    } else if (isListen) {
+      score.value += 3;
+    } else {
+      score.value += 2;
+    }
+    currentVocabIndex.value += 1;
+    move();
+    answer.value = "";
+  } else {
+    score.value -= 1;
+  }
+
+  // currentVocabIndex.value += 1;
+  // move();
+};
+
+// watch(currentLessonMenu.value, () => {
+//   shuffleArray();
+// });
+
+onMounted(() => {
+  scrollToLesson(lessonId.value);
+
+  // shuffleArray();
+});
+</script>
+
+<template>
+  <div class="flex gap-4">
+    <div class="relative w-2rem md:w-5rem flex-0">
+      <menuList
+        :item="lessons"
+        @onClickItemMenu="scrollToLesson"
+        :currentLesson="currentLessonMenu"
+      />
+    </div>
+
+    <div class="mt-8 py-4 md:pt-2 flex-1" style="margin-inline: auto">
+      <div class="gap-3 mx-0 md:mx-8" style="margin-inline: auto">
+        <div
+          class="shadow-custom border-round-md mx-0 md:mx-8 text-center p-4 flex flex-column"
+        >
+          <div class="flex justify-content-between mx-0 md:mx-8">
+            <div class="flex gap-2">
+              <i
+                @click="isTranslate = !isTranslate"
+                v-tooltip.top="isTranslate ? 'Tắt dịch' : 'Mở dịch'"
+                class="pi pi-language text-indigo-900 cursor-pointer hover:text-purple-500 transition-duration-100"
+                :style="!isTranslate ? 'opacity: 0.3' : ''"
+              ></i>
+
+              <span class="text-color-secondary" style="cursor: default"
+                >|</span
+              >
+
+              <i
+                @click="isListen = !isListen"
+                v-tooltip.top="isListen ? 'Tắt đọc' : 'Mở đọc'"
+                class="pi pi-volume-up text-indigo-900 cursor-pointer hover:text-purple-500 transition-duration-100"
+                :style="!isListen ? 'opacity: 0.3' : ''"
+              ></i>
+            </div>
+
+            <div>
+              <span>score: {{ score }}</span>
+            </div>
+          </div>
+
+          <hr class="w-10" />
+
+          <div class="flex flex-column h-20rem justify-content-center">
+            <div
+              v-if="currentStep === 'lessonTitle'"
+              class="flex flex-column gap-2"
+            >
+              <span class="text-3xl font-semibold">
+                {{ currentLesson.title }}
+              </span>
+
+              <span class="text-sm"> {{ currentLesson.translateTitle }}</span>
+
+              <div class="mt-5">
+                <Button @click="nextStep">Bắt đầu</Button>
+              </div>
+            </div>
+
+            <div v-else-if="currentStep === 'vocab'">
+              <div
+                v-if="currentVocabIndex < currentLesson.vocab.length"
+                class="flex flex-column gap-5"
+              >
+                <span v-if="isTranslate" class="font-bold text-3xl">
+                  {{ currentLesson.vocab[currentVocabIndex].translate }}
+                </span>
+
+                <div>
+                  <InputText v-model="answer" class="text-center" />
+                </div>
+
+                <div>
+                  <Button @click="nextVocabStep">Tiếp tục</Button>
+                </div>
+              </div>
+              <div v-else>
+                <Button @click="nextStep">Tiếp tục</Button>
+              </div>
+            </div>
+
+            <div v-else>
+              <h2>Finish</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.shadow-custom {
+  box-shadow: 0px 3px 5px rgba(162, 0, 255, 0.466),
+    0px 0px 2px rgba(161, 5, 223, 0.05), 0px 1px 4px rgba(213, 26, 250, 0.08);
+}
+</style>
