@@ -1,49 +1,48 @@
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 
 const props = defineProps({
   lesson: {
     type: Array,
-    default: null,
-  },
-});
+    default: null
+  }
+})
 
-const currentUtterance = ref(null);
-const currentWord = ref(null);
+const currentUtterance = ref(null)
+const currentWord = ref(null)
 
 // Bấm vào để đọc
 const onClickWord = (speakWord) => {
-  currentWord.value = speakWord;
+  currentWord.value = speakWord
 
   if (currentUtterance.value) {
-    speechSynthesis.cancel();
+    speechSynthesis.cancel()
   }
 
-  const utterance = new SpeechSynthesisUtterance(speakWord);
+  const utterance = new SpeechSynthesisUtterance(speakWord)
 
   // Ẩn icon loa khi đọc xong
   utterance.onend = () => {
-    currentWord.value = null;
-  };
+    currentWord.value = null
+  }
 
-  speechSynthesis.speak(utterance);
-  currentUtterance.value = utterance;
-};
+  speechSynthesis.speak(utterance)
+  currentUtterance.value = utterance
+}
 
 // Kiểm tra từ trong example nếu nó giống với từ trong word thì làm đậm và underline
 const highlightText = (example, word) => {
   // Sử dụng biểu thức chính quy để tìm từ trong câu ví dụ
-  const regex = new RegExp(`\\b${word}\\b`, "gi");
+  const regex = new RegExp(`\\b${word}\\b`, 'gi')
 
   // Thay thế từ bằng phiên bản in đậm và underline
   const highlightedText = example.replace(
     regex,
-    (match) =>
-      `<span style="text-decoration: underline;"><b>${match}</b></span>`
-  );
+    (match) => `<span style="text-decoration: underline;"><b>${match}</b></span>`
+  )
 
-  return highlightedText;
-};
+  return highlightedText
+}
 </script>
 
 <template>
@@ -82,9 +81,7 @@ const highlightText = (example, word) => {
       ></i>
     </div>
 
-    <div
-      class="text-sm md:text-base p-3 md:p-4 border-round-md flex flex-column gap-3 pb-5"
-    >
+    <div class="text-sm md:text-base p-3 md:p-4 border-round-md flex flex-column gap-3 pb-5">
       <div
         v-for="(word, index) in lessonItem.vocab"
         :key="index"
@@ -144,11 +141,7 @@ const highlightText = (example, word) => {
             <i
               @click="word.isFavorite = !word.isFavorite"
               class="cursor-pointer"
-              :class="
-                !word.isFavorite
-                  ? 'pi pi-heart'
-                  : 'pi pi-heart-fill zoomin text-red-500'
-              "
+              :class="!word.isFavorite ? 'pi pi-heart' : 'pi pi-heart-fill zoomin text-red-500'"
             ></i>
           </div>
         </div>
@@ -178,19 +171,19 @@ const highlightText = (example, word) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .shadow-custom {
-  box-shadow: 0px 3px 5px rgba(162, 0, 255, 0.466),
-    0px 0px 2px rgba(161, 5, 223, 0.05), 0px 1px 4px rgba(213, 26, 250, 0.08);
+  box-shadow:
+    0px 3px 5px rgba(162, 0, 255, 0.466),
+    0px 0px 2px rgba(161, 5, 223, 0.05),
+    0px 1px 4px rgba(213, 26, 250, 0.08);
 }
 
 .hide {
   display: none;
 }
 
-.myDIV:hover {
-  .hide {
-    display: flex;
-  }
+.myDIV:hover .hide {
+  display: flex;
 }
 </style>

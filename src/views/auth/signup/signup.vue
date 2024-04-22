@@ -1,115 +1,107 @@
 <script setup>
-import { ref } from "vue";
+import * as Yup from 'yup'
+import { reactive } from 'vue'
+import { useForm, useField } from 'vee-validate'
+import InputTextValidate from '@/components/InputTextValidate.vue'
+import { useRouter } from 'vue-router'
+import AuthBanner from '@/components/AuthBanner.vue'
+import { isValidEmail, onValidPassword } from '@/utils'
+import { StoreApp } from '@/services/stores'
 
-const email = ref(null);
-const password = ref(null);
-const confirmPassword = ref(null);
-const birthdate = ref();
+const { onActionRegisterAccount } = StoreApp()
+
+const router = useRouter()
+
+const formData = reactive({
+  fullName: '',
+  dayOfBirth: null,
+  email: '',
+  password: '',
+  passwordConfirm: ''
+})
+
+const schema = Yup.object({
+  fullName: Yup.string().required('Please enter your full name'),
+  dayOfBirth: Yup.string().required('Please enter your date of birth'),
+  email: Yup.string()
+    .test('email', 'Your email is not valid', (v) => isValidEmail(v))
+    .required('Please enter your email'),
+  password: Yup.string()
+    .test('password', 'Must be at least 6 characters', (v) => onValidPassword(v))
+    .required('Please enter a password'),
+  passwordConfirm: Yup.string()
+    .when('password', (v, schema, { value }) => {
+      return schema.test('', 'Confirmation password does not match', () => v[0] === value)
+    })
+    .required('Please enter the confirmation password')
+})
+const { values: infoData, handleSubmit } = useForm({
+  initialValues: formData,
+  validationSchema: schema,
+  keepValuesOnUnmount: true
+})
+
+const { value: dayOfBirth, errorMessage: errDayOfBirth } = useField('dayOfBirth')
+
+const onSubmit = handleSubmit(async () => {
+  const res = await onActionRegisterAccount(infoData)
+  if (res.success) {
+    router.push({ name: 'Login' })
+  }
+})
 </script>
 
 <template>
   <div class="flex align-items-center h-screen">
     <!-- Left -->
-    <div
-      class="flex flex-column bg-blue-200 h-full w-6 p-5 gap-5 align-items-center"
-    >
-      <div class="w-full">
-        <img
-          src="/public/images/homeBackground.jpg"
-          class="w-full flex justify-content-center border-round"
-        />
-      </div>
-      <div
-        class="text-lg font-medium text-blue-900 flex flex-column text-center"
-      >
-        <span
-          >Xin chào! Chào mừng bạn đến với "S Web Vocab" - trang web được thiết
-          kế để tạo và học từ vựng trong các ngôn ngữ khác nhau. Tại đây, bạn có
-          thể khám phá và phát triển vốn từ vựng của mình một cách hiệu quả và
-          thú vị.</span
-        >
-      </div>
-    </div>
+    <AuthBanner />
 
     <!-- Right -->
-    <div class="w-6 flex justify-content-center">
-      <div class="flex w-max flex-column gap-5">
-        <div class="text-center">
-          <span class="text-4xl font-semibold text-blue-500"
-            >Create an account</span
-          >
-        </div>
-        <div class="card flex flex-column gap-2 justify-content-center">
-          <!-- Fullname -->
-          <div class="flex flex-column gap-1">
-            <label for="fullname"
-              >Full Name <span class="text-red-500">*</span>
-            </label>
-            <InputText
-              id="fullname"
-              v-model="fullname"
-              placeholder="Your name"
-            />
-          </div>
-          <!-- Email -->
-          <div class="flex flex-column gap-1">
-            <label for="email"
-              >Email Address <span class="text-red-500">*</span>
-            </label>
-            <InputText
-              id="email"
-              v-model="email"
-              placeholder="Example@gmail.com"
-            />
-          </div>
-          <!-- Password -->
-          <div class="flex flex-column gap-1">
-            <label for="password">
-              Password <span class="text-red-500">*</span>
-            </label>
-            <Password
-              v-model="password"
-              placeholder="Enter password"
-              toggleMask
-              inputClass="w-22rem"
-            />
-          </div>
-          <!-- Confirm password -->
-          <div class="flex flex-column gap-1">
-            <label for="confirmPassword">
-              Confirm Password <span class="text-red-500">*</span>
-            </label>
-            <Password
-              v-model="confirmPassword"
-              placeholder="Enter confirm password"
-              toggleMask
-              inputClass="w-22rem"
-            />
-          </div>
-          <!-- Birthdate -->
-          <div class="flex flex-column gap-1">
-            <label for="birthdate" birthdate> Date of Birth </label>
-            <Calendar
-              v-model="birthdate"
-              showIcon
-              :showOnFocus="false"
-              inputId="birthdate"
-              class="w-full"
-            />
+    <div class="flex-1 flex flex-column align-items-center gap-4">
+      <div class="flex flex-column align-items-center">
+        <span class="text-3xl font-semibold text-blue-500">Create an account</span>
+      </div>
+
+      <div class="flex flex-column gap-3 w-25rem">
+        <div class="flex gap-2">
+          <InputTextValidate label="Full name" name="fullName" class="" />
+
+          <div class="flex flex-column gap-2">
+            <div>Day of birth<span class="p-error">*</span></div>
+            <div class="flex flex-column gap-1">
+              <Calendar v-model="dayOfBirth" showIcon :showOnFocus="false" />
+              <small v-show="errDayOfBirth" class="p-error">
+                {{ errDayOfBirth }}
+              </small>
+            </div>
           </div>
         </div>
-        <div class="flex flex-column gap-1">
-          <div class="flex justify-content-center">
-            <Button label="Create your account" class="shadow-3 w-full" />
-          </div>
-          <div class="flex gap-2 justify-content-center">
-            <span>Already have an account ?</span>
-            <a
-              href="#"
-              class="text-blue-500 font-medium hover:text-blue-700"
-              style="text-decoration: none"
-              >Log In</a
+
+        <InputTextValidate label="Email address" name="email" class="w-full" />
+
+        <div class="flex gap-2">
+          <InputTextValidate label="Password" name="password" type="password" class="w-full" />
+
+          <InputTextValidate
+            label="Password confirm"
+            name="passwordConfirm"
+            type="password"
+            class="w-full"
+          />
+        </div>
+
+        <Button label="Create account" @click="onSubmit" />
+
+        <div class="w-full flex justify-content-center">
+          <div class="flex gap-1">
+            <span> Do you already have an account? </span>
+            <span
+              style="color: #059669; cursor: pointer"
+              class="font-bold"
+              @click="router.replace({ name: 'Login' })"
             >
+              Sign In
+            </span>
           </div>
         </div>
       </div>
@@ -117,4 +109,4 @@ const birthdate = ref();
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped></style>
