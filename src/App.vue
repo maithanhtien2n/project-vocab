@@ -1,20 +1,30 @@
 <script setup>
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppTopBar from './AppTopBar.vue'
+import { onDeleteAppLocalStorage } from '@/utils'
+
+const router = useRouter()
+const route = useRoute()
 
 const itemMenu = ref([
   {
     icon: 'pi pi-home',
     title: 'Classroom',
-    open: false,
+    open: true,
     item: [
       {
         icon: 'pi pi-book',
-        subItem: 'My Classroom'
+        subItem: 'My Classroom',
+        routeName: 'MyClassroom',
+        params: null,
+        query: { type: 'myClassRoom' }
       },
       {
         icon: 'pi pi-users',
-        subItem: 'Joined Classroom'
+        subItem: 'Joined Classroom',
+        routeName: 'MyClassroom',
+        query: { type: 'joinedClassroom' }
       }
     ]
   },
@@ -25,18 +35,52 @@ const itemMenu = ref([
     item: [
       {
         icon: 'pi pi-user',
-        subItem: 'Profile'
+        subItem: 'Profile',
+        routeName: 'Profile'
       },
       {
         icon: 'pi pi-sign-out',
-        subItem: 'Log out'
+        subItem: 'Log out',
+        routeName: 'LogOut'
       }
     ]
   }
 ])
 
+const onActive = (subItem) => {
+  switch (subItem) {
+    case 'My Classroom':
+      return route.name === 'MyClassroom' && route.query.type === 'myClassRoom'
+    case 'Joined Classroom':
+      return route.name === 'MyClassroom' && route.query.type === 'joinedClassroom'
+    case 'Profile':
+      return route.name === 'Profile'
+    default:
+      break
+  }
+}
+
 const toggleSubMenu = (menu) => {
   menu.open = !menu.open
+}
+
+const onClickMenuItem = ({ routeName, params, query }) => {
+  if (routeName === 'LogOut') {
+    onDeleteAppLocalStorage()
+    return
+  }
+
+  let routerData = {}
+  if (routeName) {
+    routerData.name = routeName
+  }
+  if (params) {
+    routerData.params = params
+  }
+  if (query) {
+    routerData.query = query
+  }
+  router.push(routerData)
 }
 </script>
 
@@ -45,6 +89,7 @@ const toggleSubMenu = (menu) => {
 
   <div style="margin-top: 4rem" class="flex">
     <div
+      v-if="route.name !== 'Vocabulary'"
       class="card"
       style="
         border-width: 0 1px 0 0;
@@ -72,9 +117,14 @@ const toggleSubMenu = (menu) => {
                 <li v-for="subMenu in menu.item" :key="subMenu.subItem">
                   <a
                     class="flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                    @click="onClickMenuItem(subMenu)"
                   >
-                    <i :class="subMenu.icon + ' mr-2'"></i>
-                    <span class="font-medium">{{ subMenu.subItem }}</span>
+                    <i
+                      :class="[subMenu.icon + ' mr-2', { activeColor: onActive(subMenu.subItem) }]"
+                    />
+                    <span :class="['font-medium', { activeColor: onActive(subMenu.subItem) }]">
+                      {{ subMenu.subItem }}
+                    </span>
                   </a>
                 </li>
               </ul>
@@ -88,3 +138,9 @@ const toggleSubMenu = (menu) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.activeColor {
+  color: #059669;
+}
+</style>

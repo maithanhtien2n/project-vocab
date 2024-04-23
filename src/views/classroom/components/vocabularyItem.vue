@@ -156,7 +156,7 @@ const highlightText = (example, word) => {
             v-tooltip.top="word.translateWord"
             class="cursor-pointer hover:text-purple-500 transition-duration-100"
             v-html="'EX: ' + highlightText(word.example, word.word)"
-          ></div>
+          />
 
           <div class="pl-2">
             <div v-if="currentWord === word.example" style="width: 1rem">

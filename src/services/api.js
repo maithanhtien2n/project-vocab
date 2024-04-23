@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { accessToken } from '@/utils'
 
 class ApiApp {
   onApiLoginAccount = async (args) => {
@@ -21,7 +22,17 @@ class ApiApp {
 export const API_APP = new ApiApp()
 
 const AxiosInstance = axios.create({
-  baseURL: 'http://localhost:3000/api/v1'
+  baseURL: 'http://localhost:3100/api/v1'
 })
 
-export { AxiosInstance }
+const updateAuthorizationHeader = (token) => {
+  if (token) {
+    AxiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  } else {
+    delete AxiosInstance.defaults.headers.common['Authorization']
+  }
+}
+
+updateAuthorizationHeader(accessToken?.value)
+
+export { AxiosInstance, updateAuthorizationHeader }

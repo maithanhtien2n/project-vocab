@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { userData } from '@/utils'
 
 const router = useRouter()
 </script>
@@ -11,7 +12,16 @@ const router = useRouter()
     <span class="text-2xl font-bold text-800">S Web Vocab</span>
 
     <div>
-      <Button label="Sign In" outlined @click="router.push({ name: 'Login' })" />
+      <div v-if="true" class="flex align-items-center gap-2">
+        <Avatar
+          :label="userData.email.charAt(0).toUpperCase()"
+          style="background-color: #dee9fc; color: #1a2551"
+          shape="circle"
+        />
+        <span class="text-800">{{ userData.email }}</span>
+      </div>
+
+      <Button v-else label="Sign In" outlined @click="router.push({ name: 'Login' })" />
     </div>
   </div>
 </template>

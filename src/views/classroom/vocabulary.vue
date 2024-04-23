@@ -61,7 +61,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="flex gap-2">
-    <div class="relative w-2rem md:w-5rem flex-0">
+    <div class="relative w-2rem md:w-5rem">
       <menuList :item="lesson" @onClickItemMenu="scrollToLesson" :currentLesson="currentLesson" />
     </div>
 
@@ -93,5 +93,3 @@ onBeforeUnmount(() => {
     </div>
   </div>
 </template>
-
-<style scoped></style>

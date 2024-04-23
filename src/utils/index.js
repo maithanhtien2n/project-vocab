@@ -1,3 +1,47 @@
+import { useStorage } from '@vueuse/core'
+import { computed } from 'vue'
+import router from '@/services/router'
+import { StoreApp } from '@/services/stores'
+
+const appLocalStorage = useStorage(
+  'AppLocalStorage',
+  {
+    userData: {
+      _id: '',
+      avatar: null,
+      fullName: '',
+      phoneNumber: null,
+      gender: null,
+      dayOfBirth: '',
+      address: null,
+      email: '',
+      role: ''
+    },
+    accessToken: ''
+  },
+  localStorage,
+  { mergeDefaults: true }
+)
+
+const userData = computed(() => appLocalStorage.value.userData)
+const accessToken = computed(() => appLocalStorage.value.accessToken)
+
+const onDeleteAppLocalStorage = () => {
+  StoreApp().onActionLoadingActive(true)
+  localStorage.removeItem('AppLocalStorage')
+
+  appLocalStorage.value = {
+    userData: {},
+    accessToken: ''
+  }
+
+  router.replace({ name: 'Login' })
+
+  setTimeout(() => {
+    StoreApp().onActionLoadingActive(false)
+  }, 1000)
+}
+
 const isEmpty = (value) => {
   return (
     value === '' ||
@@ -20,4 +64,12 @@ const onValidPassword = (password) => {
   return regex.test(password)
 }
 
-export { isEmpty, isValidEmail, onValidPassword }
+export {
+  appLocalStorage,
+  userData,
+  accessToken,
+  onDeleteAppLocalStorage,
+  isEmpty,
+  isValidEmail,
+  onValidPassword
+}

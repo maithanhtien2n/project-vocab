@@ -1,11 +1,11 @@
 export default [
   {
-    path: 'classroom?type=myClassRoom',
+    path: 'classroom',
     name: 'MyClassroom',
     component: () => import('../myClassroom.vue')
   },
   {
-    path: 'classroom/:classRoomId',
+    path: 'classroom/:id',
     name: 'Vocabulary',
     component: () => import('../vocabulary.vue')
   },

@@ -22,6 +22,9 @@ import ProgressSpinner from 'primevue/progressspinner'
 import RadioButton from 'primevue/radiobutton'
 import Textarea from 'primevue/textarea'
 import Toast from 'primevue/toast'
+import Avatar from 'primevue/avatar'
+import InputOtp from 'primevue/inputotp'
+import Checkbox from 'primevue/checkbox'
 
 const app = createApp(AppWrapper)
 
@@ -39,5 +42,8 @@ app.component('ProgressSpinner', ProgressSpinner)
 app.component('RadioButton', RadioButton)
 app.component('Textarea', Textarea)
 app.component('Toast', Toast)
+app.component('Avatar', Avatar)
+app.component('InputOtp', InputOtp)
+app.component('Checkbox', Checkbox)
 
 app.mount('#app')

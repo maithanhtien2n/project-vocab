@@ -6,6 +6,8 @@ import InputTextValidate from '@/components/InputTextValidate.vue'
 import { useRouter } from 'vue-router'
 import AuthBanner from '@/components/AuthBanner.vue'
 import { StoreApp } from '@/services/stores'
+import { appLocalStorage } from '@/utils'
+import { updateAuthorizationHeader } from '@/services/api'
 
 const router = useRouter()
 
@@ -30,6 +32,8 @@ const { values: infoData, handleSubmit } = useForm({
 const onSubmit = handleSubmit(async () => {
   const res = await onActionLoginAccount(infoData)
   if (res.success) {
+    updateAuthorizationHeader(res?.data?.accessToken)
+    appLocalStorage.value = res?.data
     router.push({ name: 'MyClassroom', query: { type: 'myClassRoom' } })
   }
 })

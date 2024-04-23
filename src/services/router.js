@@ -1,4 +1,5 @@
 import App from '@/App.vue'
+import { accessToken } from '@/utils'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import RoutesAuth from '@/views/auth/services/routes'
@@ -27,6 +28,11 @@ const routes = [
     path: '/sign-up',
     name: 'SignUp',
     component: () => import('@/views/auth/signup/signup.vue')
+  },
+  {
+    path: '/not-found',
+    name: 'NotFound',
+    component: () => import('@/pages/NotFound.vue')
   }
 ]
 
@@ -42,6 +48,15 @@ router.beforeEach(async (to, from, next) => {
     return next({ name: 'NotFound' })
   }
 
+  if (accessToken.value) {
+    if (['Login', 'SignUp'].includes(to.name)) {
+      return next({ name: 'MyClassroom', query: { type: 'myClassRoom' } })
+    }
+  } else {
+    if (to.name !== 'Login' && to.name !== 'SignUp' && to.name !== 'NotFound') {
+      return next({ name: 'Login' })
+    }
+  }
   next()
 })
 
