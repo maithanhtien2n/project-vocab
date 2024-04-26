@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice'
 
 import '/node_modules/primeflex/primeflex.css'
 import 'primevue/resources/themes/aura-light-green/theme.css'
@@ -25,6 +26,7 @@ import Toast from 'primevue/toast'
 import Avatar from 'primevue/avatar'
 import InputOtp from 'primevue/inputotp'
 import Checkbox from 'primevue/checkbox'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 const app = createApp(AppWrapper)
 
@@ -32,6 +34,7 @@ app.use(createPinia())
 app.use(router)
 app.use(PrimeVue)
 app.use(ToastService)
+app.use(ConfirmationService)
 
 app.component('Button', Button)
 app.component('Dialog', Dialog)
@@ -45,5 +48,6 @@ app.component('Toast', Toast)
 app.component('Avatar', Avatar)
 app.component('InputOtp', InputOtp)
 app.component('Checkbox', Checkbox)
+app.component('ConfirmDialog', ConfirmDialog)
 
 app.mount('#app')

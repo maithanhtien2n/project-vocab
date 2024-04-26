@@ -87,7 +87,7 @@ const onClickMenuItem = ({ routeName, params, query }) => {
 <template>
   <AppTopBar />
 
-  <div style="margin-top: 4rem" class="flex">
+  <div class="flex">
     <div
       v-if="route.name !== 'Vocabulary'"
       class="card"
@@ -96,6 +96,13 @@ const onClickMenuItem = ({ routeName, params, query }) => {
         border-style: solid;
         border-color: var(--surface-border);
         width: 18rem;
+        margin-top: 4rem;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        background-color: #fff;
+        z-index: 4;
       "
     >
       <div class="flex flex-column h-full">
@@ -133,7 +140,20 @@ const onClickMenuItem = ({ routeName, params, query }) => {
         </div>
       </div>
     </div>
-    <div class="flex-1">
+
+    <div
+      v-if="route.name !== 'Vocabulary'"
+      class="card"
+      style="
+        border-width: 0 1px 0 0;
+        border-style: solid;
+        border-color: var(--surface-border);
+        width: 18rem;
+        margin-top: 4rem;
+      "
+    />
+
+    <div style="margin-top: 3.5rem" class="flex-1">
       <router-view />
     </div>
   </div>

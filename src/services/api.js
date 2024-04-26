@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { accessToken } from '@/utils'
 
+export * as API_CLASS_ROOM from '@/views/classroom/services/api'
+
 class ApiApp {
   onApiLoginAccount = async (args) => {
     return await AxiosInstance({
