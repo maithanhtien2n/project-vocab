@@ -53,12 +53,12 @@ const highlightText = (example, word) => {
     class="w-full shadow-custom flex flex-column gap-2 border-round-md"
   >
     <div
-      class="text-sm md:text-lg font-semibold p-3 md:p-4 bg-purple-200 border-round-top-md flex gap-2 align-items-center"
+      class="text-sm md:text-lg font-semibold p-3 md:p-4 bg-green-200 border-round-top-md flex gap-2 align-items-center"
     >
       <span
         @click="onClickWord(lessonItem.title)"
         v-tooltip.top="lessonItem?.translateTitle"
-        class="cursor-pointer text-purple-700"
+        class="cursor-pointer text-green-700"
       >
         {{ lessonItem.title }}
       </span>
@@ -68,7 +68,7 @@ const highlightText = (example, word) => {
       <i
         @click="lessonItem.isTranslate = !lessonItem.isTranslate"
         v-tooltip.top="lessonItem.isTranslate ? 'Tắt dịch' : 'Mở dịch'"
-        class="pi pi-language text-indigo-900 cursor-pointer hover:text-purple-500 transition-duration-100"
+        class="pi pi-language text-indigo-900 cursor-pointer hover:text-green-500 transition-duration-100"
         :style="!lessonItem.isTranslate ? 'opacity: 0.3' : ''"
       ></i>
 
@@ -76,7 +76,7 @@ const highlightText = (example, word) => {
       <i
         @click="lessonItem.isExample = !lessonItem.isExample"
         v-tooltip.top="lessonItem.isExample ? 'Tắt ví dụ' : 'Mở ví dụ'"
-        class="pi pi-book text-indigo-900 cursor-pointer hover:text-purple-500 transition-duration-100"
+        class="pi pi-book text-indigo-900 cursor-pointer hover:text-green-500 transition-duration-100"
         :style="!lessonItem.isExample ? 'opacity: 0.3' : ''"
       ></i>
     </div>
@@ -92,7 +92,7 @@ const highlightText = (example, word) => {
             <div class="flex gap-2" style="width: 10rem; min-height: 1.4rem">
               <span
                 @click="onClickWord(word.word)"
-                class="cursor-pointer hover:text-purple-500 transition-duration-100 font-semibold"
+                class="cursor-pointer hover:text-green-500 transition-duration-100 font-semibold"
                 v-tooltip.top="word.translate"
               >
                 {{ word.word }}
@@ -100,7 +100,7 @@ const highlightText = (example, word) => {
 
               <div>
                 <div v-if="currentWord === word.word" style="width: 1rem">
-                  <i class="pi pi-megaphone text-purple-700"></i>
+                  <i class="pi pi-megaphone text-green-700"></i>
                 </div>
 
                 <div v-else style="width: 1rem"></div>
@@ -124,12 +124,12 @@ const highlightText = (example, word) => {
                 @click="onClickWord(word.example)"
                 v-tooltip.top="word.translateWord"
                 v-html="highlightText(word.example, word.word)"
-                class="cursor-pointer hover:text-purple-500 transition-duration-100"
+                class="cursor-pointer hover:text-green-500 transition-duration-100"
               ></span>
 
               <div class="pl-2">
                 <div v-if="currentWord === word.example" style="width: 1rem">
-                  <i class="pi pi-megaphone text-purple-700"></i>
+                  <i class="pi pi-megaphone text-green-700"></i>
                 </div>
 
                 <div v-else style="width: 1rem"></div>
@@ -154,13 +154,13 @@ const highlightText = (example, word) => {
           <div
             @click="onClickWord(word.example)"
             v-tooltip.top="word.translateWord"
-            class="cursor-pointer hover:text-purple-500 transition-duration-100"
+            class="cursor-pointer hover:text-green-500 transition-duration-100"
             v-html="'EX: ' + highlightText(word.example, word.word)"
           />
 
           <div class="pl-2">
             <div v-if="currentWord === word.example" style="width: 1rem">
-              <i class="pi pi-megaphone text-purple-700"></i>
+              <i class="pi pi-megaphone text-green-700"></i>
             </div>
 
             <div v-else style="width: 1rem"></div>

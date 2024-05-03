@@ -89,9 +89,8 @@ const onClickMenuItem = ({ routeName, params, query }) => {
 <template>
   <AppTopBar />
 
-  <div class="flex">
+  <div class="flex relative">
     <div
-      v-if="route.name !== 'Vocabulary'"
       class="card"
       style="
         border-width: 0 1px 0 0;
@@ -140,35 +139,41 @@ const onClickMenuItem = ({ routeName, params, query }) => {
             </li>
           </ul>
 
-          <ul v-else class="list-none bg-red-200">
+          <ul v-else class="list-none p-0 m-0">
             <li>
               <a
                 @click="toggleSubMenu(menu)"
-                class="flex justify-content-center align-items-center cursor-pointer border-round text-700 hover:surface-100 transition-duration-150 transition-colors"
+                class="flex justify-content-center align-items-center cursor-pointer text-700 border-bottom-1 surface-border"
               >
-                <i :class="menu.icon" class="text-center"></i>
+                <i :class="menu.icon" class="text-2xl py-2"></i>
               </a>
 
-              <!-- <ul
+              <ul
                 v-if="menu.open"
-                class="list-none py-0 pl-3 pr-0 m-0 overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out"
+                class="list-none p-1 m-0 border-bottom-1 surface-border surface-ground"
               >
                 <li v-for="subMenu in menu.item" :key="subMenu.subItem">
                   <a
-                    class="flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors"
+                    class="flex justify-content-center align-items-center cursor-pointer text-700"
                     @click="onClickMenuItem(subMenu)"
                   >
-                    <i
-                      :class="[subMenu.icon + ' mr-2', { activeColor: onActive(subMenu.subItem) }]"
-                    />
+                    <i :class="subMenu.icon" class="text-2xl py-2" />
                   </a>
                 </li>
-              </ul> -->
+              </ul>
             </li>
           </ul>
         </div>
 
-        <div @click="zoomOutMenu = !zoomOutMenu">Zoom</div>
+        <div
+          @click="zoomOutMenu = !zoomOutMenu"
+          class="flex align-items-center w-full p-3 cursor-pointer hover:surface-100 transition-duration-150 transition-colors p-ripple"
+          style="position: absolute; bottom: 0"
+          v-tooltip.right="zoomOutMenu ? 'Thu nhỏ lại' : 'Hiện thị to ra'"
+        >
+          <i :class="zoomOutMenu ? 'pi pi-angle-double-left' : 'pi pi-angle-double-right'"></i>
+          <span v-if="zoomOutMenu" class="ml-2">Show less</span>
+        </div>
       </div>
     </div>
 
@@ -186,7 +191,7 @@ const onClickMenuItem = ({ routeName, params, query }) => {
 
     <div :class="zoomOutMenu ? 'w-18rem' : 'w-4rem'"></div>
 
-    <div style="margin-top: 3.5rem" class="flex-1">
+    <div style="margin-top: 3.9rem" class="flex-1 relative">
       <router-view />
     </div>
   </div>

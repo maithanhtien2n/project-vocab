@@ -60,7 +60,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex gap-2">
+  <div class="flex gap-2 relative">
     <div class="relative w-2rem md:w-5rem">
       <menuList :item="lesson" @onClickItemMenu="scrollToLesson" :currentLesson="currentLesson" />
     </div>
@@ -70,8 +70,8 @@ onBeforeUnmount(() => {
         <div class="flex gap-2 align-items-center">
           <i
             @click="onClickIsAll('isTranslate')"
-            class="pi pi-language cursor-pointer hover:text-purple-500 transition-duration-100 can-not-copy"
-            :class="isAllTranslate ? 'text-purple-700' : ''"
+            class="pi pi-language cursor-pointer hover:text-green-500 transition-duration-100 can-not-copy"
+            :class="isAllTranslate ? 'text-green-700' : ''"
             style="min-width: 8.2rem"
           >
             {{ isAllTranslate ? ' Tắt tất cả dịch' : ' Mở tất cả dịch' }}
@@ -81,8 +81,8 @@ onBeforeUnmount(() => {
 
           <i
             @click="onClickIsAll('isExample')"
-            class="pi pi-book cursor-pointer hover:text-purple-500 transition-duration-100 can-not-copy"
-            :class="isAllExample ? 'text-purple-700' : ''"
+            class="pi pi-book cursor-pointer hover:text-green-500 transition-duration-100 can-not-copy"
+            :class="isAllExample ? 'text-green-700' : ''"
           >
             {{ isAllExample ? ' Tắt tất cả ví dụ' : ' Mở tất cả ví dụ' }}
           </i>
