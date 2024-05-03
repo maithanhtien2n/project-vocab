@@ -14,11 +14,21 @@ const router = useRouter()
 
     <div>
       <div v-if="true" class="flex align-items-center gap-2">
+        <img
+          v-if="userData?.avatar"
+          :src="userData?.avatar || '/images/user.png'"
+          onerror="this.onerror=null; this.src='/images/user.png';"
+          style="width: 31px; height: 31px"
+          class="border-circle"
+        />
+
         <Avatar
+          v-else
           :label="userData.email.charAt(0).toUpperCase()"
           style="background-color: #dee9fc; color: #1a2551"
           shape="circle"
         />
+
         <span class="text-800">{{ userData.email }}</span>
       </div>
 
