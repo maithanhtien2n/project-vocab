@@ -27,8 +27,8 @@ const onClickItemMenu = (id) => {
 <template>
   <!--         style="box-shadow: 5px 0 10px -5px rgba(248, 159, 91)" -->
   <div
-    class="w-3rem md:w-7rem border-right-1 border-green-500 can-not-copy"
-    style="box-shadow: 5px 0 10px -5px rgba(163, 25, 255, 0.75); position: fixed; top: 0; bottom: 0"
+    class="w-3rem md:w-7rem border-right-1 can-not-copy surface-border"
+    style="position: fixed; top: 0; bottom: 0"
   >
     <div class="mx-2">
       <div class="flex flex-column mt-7">

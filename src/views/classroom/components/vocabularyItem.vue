@@ -68,7 +68,7 @@ const highlightText = (example, word) => {
       <i
         @click="lessonItem.isTranslate = !lessonItem.isTranslate"
         v-tooltip.top="lessonItem.isTranslate ? 'Tắt dịch' : 'Mở dịch'"
-        class="pi pi-language text-indigo-900 cursor-pointer hover:text-green-500 transition-duration-100"
+        class="pi pi-language text-cyan-900 cursor-pointer hover:text-green-500 transition-duration-100"
         :style="!lessonItem.isTranslate ? 'opacity: 0.3' : ''"
       ></i>
 
@@ -76,7 +76,7 @@ const highlightText = (example, word) => {
       <i
         @click="lessonItem.isExample = !lessonItem.isExample"
         v-tooltip.top="lessonItem.isExample ? 'Tắt ví dụ' : 'Mở ví dụ'"
-        class="pi pi-book text-indigo-900 cursor-pointer hover:text-green-500 transition-duration-100"
+        class="pi pi-book text-cyan-900 cursor-pointer hover:text-green-500 transition-duration-100"
         :style="!lessonItem.isExample ? 'opacity: 0.3' : ''"
       ></i>
     </div>
@@ -174,7 +174,7 @@ const highlightText = (example, word) => {
 <style scoped>
 .shadow-custom {
   box-shadow:
-    0px 3px 5px rgba(162, 0, 255, 0.466),
+    0px 3px 5px rgba(0, 255, 34, 0.466),
     0px 0px 2px rgba(161, 5, 223, 0.05),
     0px 1px 4px rgba(213, 26, 250, 0.08);
 }
