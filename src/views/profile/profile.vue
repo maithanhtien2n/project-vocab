@@ -1,17 +1,56 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
+import * as Yup from 'yup'
+import { useForm, useField } from 'vee-validate'
+import InputTextValidate from '@/components/InputTextValidate.vue'
+import ImageValidate from '@/components/ImageValidate.vue'
+import { STORE_PROFILE } from '@/services/stores'
+import { userData, appLocalStorage, formatDateToDDMMYY } from '@/utils'
 
-// const toast = useToast();
-const passwordVisible = ref(false)
+const { onGetterUserInfo, onActionGetUserInfo, onActionSaveUserInfo } = STORE_PROFILE.StoreProfile()
 
-const profile = ref({
-  image: '/public/images/user.png',
-  name: 'Nguyễn Thị A',
-  email: 'anguyenthi@gmail.com',
-  phoneNumber: '0123456789',
-  gender: 'Nữ',
-  birthDate: '01/01/2002',
-  address: 'Bách Khoa, Hai Bà Trưng, Hà Nội'
+const formData = reactive({
+  avatar: null,
+  fullName: '',
+  email: '',
+  phoneNumber: '',
+  gender: '',
+  dayOfBirth: '',
+  address: ''
+})
+
+const accountId = computed(() => userData.value._id)
+
+const schema = Yup.object({
+  fullName: Yup.string().required('Please enter your full name'),
+  phoneNumber: Yup.string().required('Please enter your phone number'),
+  dayOfBirth: Yup.string().required('Please enter your day of birth')
+})
+
+const {
+  values: infoData,
+  handleSubmit,
+  resetForm,
+  setFieldValue
+} = useForm({
+  initialValues: formData,
+  validationSchema: schema,
+  keepValuesOnUnmount: true
+})
+
+const { value: gender } = useField('gender')
+const { value: dayOfBirth, errorMessage: errDayOfBirth } = useField('dayOfBirth')
+const { value: address } = useField('address')
+
+const onSubmit = handleSubmit(async () => {
+  const res = await onActionSaveUserInfo({ ...infoData, accountId: accountId.value })
+  if (res.success) {
+    onActionGetUserInfo({ accountId: accountId.value, noLoading: true }).then((res) => {
+      if (res.success) {
+        appLocalStorage.value.userData = res?.data
+      }
+    })
+  }
 })
 
 const changePassword = ref({
@@ -20,24 +59,22 @@ const changePassword = ref({
   confirmPassword: null
 })
 
-const genderType = ref([
-  {
-    code: '1',
-    name: 'Nam'
-  },
-  {
-    code: '0',
-    name: 'Nữ'
-  }
-])
+const passwordVisible = ref(false)
 
-const onUpload = (event) => {
-  const reader = new FileReader()
-  reader.readAsDataURL(event.target.files[0])
-  reader.onload = (e) => {
-    profile.value.image = e.target.result
+watch(onGetterUserInfo, (newUserInfo) => {
+  resetForm({ values: Object.assign(formData, newUserInfo) })
+  if (newUserInfo.avatar) {
+    setFieldValue('avatar', {
+      name: newUserInfo?.avatar.split('$')[1],
+      base64: newUserInfo?.avatar
+    })
   }
-}
+  setFieldValue('dayOfBirth', formatDateToDDMMYY(newUserInfo?.dayOfBirth))
+})
+
+onMounted(() => {
+  onActionGetUserInfo({ accountId: accountId.value })
+})
 </script>
 
 <template>
@@ -45,65 +82,37 @@ const onUpload = (event) => {
     <span class="text-2xl font-bold">PROFILE</span>
     <div class="flex flex-column lg:flex-row gap-8 p-3 align-items-center justify-content-center">
       <!-- Ảnh  -->
-      <div class="flex flex-column gap-3 relative">
-        <div style="overflow: hidden" class="w-15rem h-15rem">
-          <img
-            :src="profile.image"
-            class="w-full h-full border-circle border-1 text-300"
-            style="object-fit: cover"
-          />
-        </div>
-        <!-- File upload -->
-        <div
-          class="flex flex-column gap-2 absolute bottom-0 border-circle"
-          style="margin-left: 11rem; height: 50px; width: 2.5rem"
-          for="upload"
-        >
-          <div
-            class="bg-white relative overflow-hidden flex align-items-center text-600 justify-content-center w-3rem h-10rem border-1 border-dashed border-circle"
-          >
-            <div class="flex flex-column text-center">
-              <i style="font-size: 1.2rem" class="pi pi-camera" />
-              <input
-                type="file"
-                style="top: -5rem"
-                accept="image/*"
-                class="absolute bottom-0 left-0 right-0 cursor-pointer"
-                @change="onUpload"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <ImageValidate name="avatar" class="image w-13rem h-13rem" :required="false" />
 
       <!-- thông tin -->
       <div class="flex flex-column gap-2">
         <div class="flex gap-5 text-base align-items-center">
           <span class="w-8rem font-semibold">Full name</span>
-          <InputText v-model="profile.name" class="h-1 w-8 pl-2" />
+          <InputTextValidate name="fullName" class="h-1 w-8" />
         </div>
 
         <div class="flex gap-5 text-base align-items-center">
           <span class="w-8rem font-semibold">Email</span>
-          <InputText v-model="profile.email" class="h-1 w-8 pl-2" />
+          <InputTextValidate name="email" class="h-1 w-8" :disabled="true" />
         </div>
 
         <div class="flex gap-5 text-base align-items-center">
-          <span class="w-8rem font-semibold">Mobile number</span>
-          <InputText v-model="profile.phoneNumber" class="h-1 w-8 pl-2" />
+          <span class="w-8rem font-semibold">Phone number</span>
+          <InputTextValidate name="phoneNumber" type="number" class="h-1 w-8" />
         </div>
 
         <!-- Gender -->
-        <div class="flex gap-5 text-base align-items-center h-2rem">
+        <div class="flex gap-5">
           <span class="w-8rem font-semibold">Gender</span>
-          <div v-for="gender in genderType" :key="gender.code">
-            <RadioButton
-              v-model="profile.gender"
-              :inputId="gender.code"
-              :name="gender.name"
-              :value="gender.name"
-            />
-            <label class="ml-2">{{ gender.name }}</label>
+          <div class="flex flex-wrap gap-3">
+            <div class="flex align-items-center gap-2">
+              <RadioButton v-model="gender" name="gender" value="MALE" />
+              <label>Nam</label>
+            </div>
+            <div class="flex align-items-center gap-2">
+              <RadioButton v-model="gender" name="gender" value="FEMALE" />
+              <label>Nữ</label>
+            </div>
           </div>
         </div>
 
@@ -113,18 +122,21 @@ const onUpload = (event) => {
           <div class="w-20rem">
             <Calendar
               inputClass="pl-2"
-              v-model="profile.birthDate"
+              v-model="dayOfBirth"
               dateFormat="dd/mm/yy"
               showIcon
               class="w-full"
             />
+            <small v-show="errDayOfBirth" class="p-error">
+              {{ errDayOfBirth }}
+            </small>
           </div>
         </div>
 
         <!-- address -->
         <div class="flex gap-5 text-base align-items-center card">
           <span class="w-8rem font-semibold">Address</span>
-          <Textarea v-model="profile.address" rows="3" class="pl-2 w-20rem" />
+          <Textarea v-model="address" rows="3" class="pl-2 w-20rem" />
         </div>
 
         <!-- Thay đỏi mật khẩu -->
@@ -148,7 +160,7 @@ const onUpload = (event) => {
             }"
             label="Save"
             class="w-full h-1"
-            @click="onClickSave"
+            @click="onSubmit"
           />
         </div>
       </div>

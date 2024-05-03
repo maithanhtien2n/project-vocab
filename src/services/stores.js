@@ -4,6 +4,7 @@ import { API_APP as API } from './api'
 import { Utils } from '@/utils/response'
 
 export * as STORE_CLASS_ROOM from '@/views/classroom/services/stores'
+export * as STORE_PROFILE from '@/views/profile/services/stores'
 
 export const StoreApp = defineStore('StoreApp', () => {
   const { onResponse } = Utils()

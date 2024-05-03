@@ -2,6 +2,7 @@ import axios from 'axios'
 import { accessToken } from '@/utils'
 
 export * as API_CLASS_ROOM from '@/views/classroom/services/api'
+export * as API_PROFILE from '@/views/profile/services/api'
 
 class ApiApp {
   onApiLoginAccount = async (args) => {
