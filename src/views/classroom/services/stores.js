@@ -1,45 +1,51 @@
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
-import { Utils } from '@/utils/response'
-import { API_CLASS_ROOM } from '@/services/api'
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { Utils } from "@/utils/response";
+import { API_CLASS_ROOM } from "@/services/api";
 
-export const StoreClassRoom = defineStore('StoreClassRoom', () => {
+export const StoreClassRoom = defineStore("StoreClassRoom", () => {
   // Các hàm khác
-  const { onResponse } = Utils()
-  const API = API_CLASS_ROOM.API_CLASS_ROOM
+  const { onResponse } = Utils();
+  const API = API_CLASS_ROOM.API_CLASS_ROOM;
 
   // State
-  const classRooms = ref([])
+  const classRooms = ref([]);
 
   // Getter
-  const onGetterClassRooms = computed(() => classRooms)
+  const onGetterClassRooms = computed(() => classRooms);
 
   // Action
   const onActionGetClassRoom = async ({ data, noLoading = false }) => {
-    const res = await onResponse(API.getClassRoom({ data, noLoading }))
-    classRooms.value = res.data
-    return res
-  }
+    const res = await onResponse(API.getClassRoom({ data, noLoading }));
+    classRooms.value = res.data;
+    return res;
+  };
 
   const onActionGetDetailClassRoom = async (id) => {
-    const res = await onResponse(API.getDetailClassRoom(id))
-    return res
-  }
+    const res = await onResponse(API.getDetailClassRoom(id));
+    return res;
+  };
 
   const onActionSaveClassRoom = async (data) => {
-    const res = await onResponse(API.saveClassRoom(data), true)
-    return res
-  }
+    const res = await onResponse(API.saveClassRoom(data), true);
+    return res;
+  };
 
   const onActionDeleteClassRoom = async (id) => {
-    const res = await onResponse(API.deleteClassRoom(id), true)
-    return res
-  }
+    const res = await onResponse(API.deleteClassRoom(id), true);
+    return res;
+  };
 
   const onActionJoinClassRoom = async (data) => {
-    const res = await onResponse(API.joinClassRoom(data), true)
-    return res
-  }
+    const res = await onResponse(API.joinClassRoom(data), true);
+    return res;
+  };
+
+  // Check có id phòng và password ko
+  const onActionIsPassword = async (data) => {
+    const res = await onResponse(API.isPassword(data));
+    return res;
+  };
 
   return {
     // Getter
@@ -50,6 +56,7 @@ export const StoreClassRoom = defineStore('StoreClassRoom', () => {
     onActionGetDetailClassRoom,
     onActionSaveClassRoom,
     onActionDeleteClassRoom,
-    onActionJoinClassRoom
-  }
-})
+    onActionJoinClassRoom,
+    onActionIsPassword,
+  };
+});

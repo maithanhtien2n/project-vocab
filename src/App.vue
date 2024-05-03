@@ -7,6 +7,8 @@ import { onDeleteAppLocalStorage } from '@/utils'
 const router = useRouter()
 const route = useRoute()
 
+const zoomOutMenu = ref(true)
+
 const itemMenu = ref([
   {
     icon: 'pi pi-home',
@@ -95,7 +97,6 @@ const onClickMenuItem = ({ routeName, params, query }) => {
         border-width: 0 1px 0 0;
         border-style: solid;
         border-color: var(--surface-border);
-        width: 18rem;
         margin-top: 4rem;
         position: fixed;
         left: 0;
@@ -104,10 +105,11 @@ const onClickMenuItem = ({ routeName, params, query }) => {
         background-color: #fff;
         z-index: 4;
       "
+      :class="zoomOutMenu ? 'w-18rem' : 'w-4rem'"
     >
       <div class="flex flex-column h-full">
         <div v-for="menu in itemMenu" :key="menu.title">
-          <ul class="list-none p-1 m-0">
+          <ul v-if="zoomOutMenu" class="list-none p-1 m-0">
             <li>
               <a
                 @click="toggleSubMenu(menu)"
@@ -137,11 +139,40 @@ const onClickMenuItem = ({ routeName, params, query }) => {
               </ul>
             </li>
           </ul>
+
+          <ul v-else class="list-none bg-red-200">
+            <li>
+              <a
+                @click="toggleSubMenu(menu)"
+                class="flex justify-content-center align-items-center cursor-pointer border-round text-700 hover:surface-100 transition-duration-150 transition-colors"
+              >
+                <i :class="menu.icon" class="text-center"></i>
+              </a>
+
+              <!-- <ul
+                v-if="menu.open"
+                class="list-none py-0 pl-3 pr-0 m-0 overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out"
+              >
+                <li v-for="subMenu in menu.item" :key="subMenu.subItem">
+                  <a
+                    class="flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors"
+                    @click="onClickMenuItem(subMenu)"
+                  >
+                    <i
+                      :class="[subMenu.icon + ' mr-2', { activeColor: onActive(subMenu.subItem) }]"
+                    />
+                  </a>
+                </li>
+              </ul> -->
+            </li>
+          </ul>
         </div>
+
+        <div @click="zoomOutMenu = !zoomOutMenu">Zoom</div>
       </div>
     </div>
 
-    <div
+    <!-- <div
       v-if="route.name !== 'Vocabulary'"
       class="card"
       style="
@@ -151,7 +182,9 @@ const onClickMenuItem = ({ routeName, params, query }) => {
         width: 18rem;
         margin-top: 4rem;
       "
-    />
+    /> -->
+
+    <div :class="zoomOutMenu ? 'w-18rem' : 'w-4rem'"></div>
 
     <div style="margin-top: 3.5rem" class="flex-1">
       <router-view />

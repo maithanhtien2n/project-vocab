@@ -20,6 +20,7 @@ const {
   onActionGetDetailClassRoom,
   onActionSaveClassRoom,
   onActionDeleteClassRoom,
+  onActionIsPassword,
   onActionJoinClassRoom
 } = STORE_CLASS_ROOM.StoreClassRoom()
 
@@ -34,6 +35,7 @@ const formData = reactive({
 })
 
 const visible = ref(false)
+const isShowPopupJoinRoom = ref(false)
 const isPassword = ref(false)
 const popUpType = ref('')
 const classRoomId = ref('')
@@ -42,7 +44,6 @@ const passwordJoin = ref('')
 const schema = Yup.object({
   roomName: Yup.string().required('Please enter the name room'),
   description: Yup.string().required('Please enter description'),
-  numberOfUsers: Yup.string().required('Please enter number of users'),
   password: Yup.string().test(
     'password',
     'Please enter a password',
@@ -93,7 +94,6 @@ const onClickOpenPopup = async (action, id) => {
 
   popUpType.value = action
   visible.value = true
-  console.log(visible.value)
 }
 
 const onClickDeleteRoom = (classRoomId) => {
@@ -124,28 +124,55 @@ const onClickRoomJoin = (classRoomId) => {
   })
 }
 
-const onClickJoinRoom = () => {
-  confirm.require({
-    message: 'Are you sure you want to join this room?',
-    header: 'Join room',
-    rejectClass: 'p-button-outlined',
-    rejectLabel: 'Cancel',
-    acceptLabel: 'Join',
-    isPassword: true,
-    accept: async () => {
-      const res = await onActionJoinClassRoom({
-        accountId: userData.value?._id,
-        classRoomId: classRoomId.value,
-        password: passwordJoin.value
+const isHavePassword = ref(false)
+
+const onClickJoinRoom = async () => {
+  if (isHavePassword.value) {
+    const res = await onActionJoinClassRoom({
+      accountId: userData.value?._id,
+      classRoomId: classRoomId.value,
+      password: passwordJoin.value
+    })
+
+    if (res.success) {
+      await onActionGetClassRoom({
+        data: { accountId: userData.value?._id, type: route.query.type },
+        noLoading: true
       })
-      if (res.success) {
-        await onActionGetClassRoom({
-          data: { accountId: userData.value?._id, type: route.query.type },
-          noLoading: true
+      isShowPopupJoinRoom.value = false
+      isHavePassword.value = false
+      passwordJoin.value = ''
+      classRoomId.value = ''
+    }
+  } else {
+    const res = await onActionIsPassword({
+      classRoomId: classRoomId.value
+    })
+
+    if (res.success) {
+      if (res.data.isPassword) {
+        isHavePassword.value = true
+      } else {
+        const res = await onActionJoinClassRoom({
+          accountId: userData.value?._id,
+          classRoomId: classRoomId.value,
+          password: passwordJoin.value
         })
+
+        if (res.success) {
+          await onActionGetClassRoom({
+            data: { accountId: userData.value?._id, type: route.query.type },
+            noLoading: true
+          })
+          isShowPopupJoinRoom.value = false
+          isHavePassword.value = false
+          passwordJoin.value = ''
+          classRoomId.value = ''
+        }
+        isHavePassword.value = false
       }
     }
-  })
+  }
 }
 
 const onSubmit = handleSubmit(async () => {
@@ -172,61 +199,113 @@ onMounted(() => {
 </script>
 
 <template>
+  <Dialog v-model:visible="isShowPopupJoinRoom" modal class="w-30rem">
+    <template #header>
+      <span class="text-2xl font-bold">Join room</span>
+    </template>
+
+    <div class="flex flex-column gap-3 align-items-center w-full">
+      <div class="flex flex-column gap-2 w-full">
+        <div class="font-bold">Room ID<span class="p-error"> *</span></div>
+        <InputText type="text" v-model="classRoomId" class="w-full" />
+      </div>
+
+      <InputOtp v-if="isHavePassword" v-model="passwordJoin" />
+    </div>
+
+    <template #footer>
+      <Button
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        @click="isShowPopupJoinRoom = false"
+      />
+      <Button type="button" label="Join" @click="onClickJoinRoom" />
+    </template>
+  </Dialog>
   <div class="p-4">
     <span class="text-2xl font-bold">{{ title }}</span>
-    <div class="mt-3 flex gap-6 flex-wrap">
+    <div class="mt-3 flex gap-3 flex-wrap">
       <div
         v-for="(item, index) in classRoom"
         :key="index"
-        class="flex gap-3 pr-3"
-        style="width: 27rem"
+        @click="onClickRoomJoin(item?._id, item?.password)"
+        class="flex gap-3 cursor-pointer border-round-2xl shadow-2 hover:shadow-4 transition-duration-100"
+        style="width: 25rem"
       >
-        <div class="relative">
+        <div class="w-25rem h-14rem relative">
+          <div class="absolute bg-white p-1 border-round" style="top: 0.5rem; left: 0.5rem">
+            <span
+              v-tooltip.top="'Sao chép ID phòng'"
+              class="line-clamp-1"
+              style="word-break: break-word; overflow-wrap: anywhere"
+              @click.stop="onCopyIdRoom(item?._id)"
+            >
+              ID room
+            </span>
+          </div>
+
           <img
             :src="item?.image || '/images/icon-class-room.jpg'"
-            class="w-13rem h-13rem border-round-2xl"
+            class="w-full h-full border-round-2xl border-noround-right bg-red-200"
+            style="object-fit: cover"
             alt="Lỗi ảnh"
-            style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px"
           />
-          <h3 style="top: 0.5rem; left: 1rem; color: #fff; max-width: 6rem" class="absolute">
-            {{ item?.roomName }}
-          </h3>
-
-          <div
-            v-if="route.query.type === 'myClassRoom'"
-            style="right: 0.7rem; top: 0.7rem"
-            class="absolute flex flex-column justify-content-center gap-2"
-          >
-            <i
-              class="pi pi-pen-to-square on-click"
-              @click="onClickOpenPopup('Update', item?._id)"
-            />
-            <i class="pi pi-trash on-click" @click="onClickDeleteRoom(item?._id)" />
-          </div>
         </div>
 
-        <div class="flex flex-column gap-3">
-          <div class="flex flex-column gap-2">
-            <span class="font-bold" @click="onCopyRoomId">Copy Room ID</span>
-            <span class="font-bold on-click" @click="onClickRoomJoin(item?._id, item?.password)">
-              {{ item?.roomName }}
-            </span>
-            <span>{{ item?.description }}</span>
-          </div>
+        <div class="flex flex-column gap-3 align-content-between w-full py-3 relative">
+          <div class="flex flex-column gap-3 w-full">
+            <div class="flex flex-column gap-2">
+              <span
+                class="font-bold on-click line-clamp-1 w-10"
+                style="word-break: break-word; overflow-wrap: anywhere"
+              >
+                {{ item?.roomName }}
+              </span>
 
-          <div class="flex flex-column gap-2">
-            <span class="font-bold">Author</span>
-            <span>{{ item?.author }}</span>
+              <span
+                class="line-clamp-3 w-10"
+                style="height: 3.5rem; word-break: break-word; overflow-wrap: anywhere"
+              >
+                {{ item?.description }}
+              </span>
+            </div>
+
+            <div class="flex flex-column gap-2">
+              <span class="font-bold">Author</span>
+
+              <span>{{ item?.author }}</span>
+            </div>
           </div>
 
           <div class="flex align-items-center gap-3">
             <i v-if="!item.password" class="pi pi-globe" />
-            <i v-else class="pi pi-lock" />
 
-            <div class="flex gap-2 align-items-center">
+            <i v-else class="pi pi-lock" v-tooltip.right="'Phòng có khóa'" />
+
+            <div class="flex gap-2 align-items-center" v-tooltip.right="'Số lượng người'">
               <i class="pi pi-users" />
+
               <span>{{ item?.memberInRoom?.length }}</span>
             </div>
+          </div>
+
+          <div
+            style="right: 1rem; top: 0.7rem"
+            class="absolute flex flex-column justify-content-center gap-2"
+          >
+            <i
+              v-if="route.query.type === 'myClassRoom'"
+              class="pi pi-pen-to-square on-click hover:text-green-400 transition-duration-100"
+              v-tooltip.right="'Sửa phòng'"
+              @click.stop="onClickOpenPopup('Update', item?._id)"
+            />
+
+            <i
+              class="pi pi-trash on-click hover:text-red-400 transition-duration-100"
+              v-tooltip.right="'Xóa phòng'"
+              @click.stop="onClickDeleteRoom(item?._id)"
+            />
           </div>
         </div>
       </div>
@@ -256,8 +335,9 @@ onMounted(() => {
         style="bottom: 5rem; right: 7rem"
         class="fixed"
         label="Join room"
-        @click="onClickJoinRoom()"
+        @click="isShowPopupJoinRoom = true"
       />
+
       <Dialog v-model:visible="visible" modal :style="{ width: '27rem' }">
         <template #header>
           <span class="font-bold text-2xl">{{ popUpType }} Room</span>
@@ -275,6 +355,7 @@ onMounted(() => {
             label="Room name"
             name="roomName"
             class="w-full"
+            :inputTextProps="{ maxlength: 50 }"
             @keypress.enter="onSubmit"
           />
 
@@ -282,6 +363,7 @@ onMounted(() => {
             label="Description"
             name="description"
             class="w-full"
+            :inputTextProps="{ maxlength: 100 }"
             @keypress.enter="onSubmit"
           />
 
@@ -290,6 +372,7 @@ onMounted(() => {
             name="numberOfUsers"
             class="w-full"
             type="number"
+            :inputTextProps="{ maxlength: 6 }"
             @keypress.enter="onSubmit"
           />
 
@@ -315,18 +398,7 @@ onMounted(() => {
     </div>
   </div>
 
-  <ConfirmDialog>
-    <template #message="slotProps">
-      <div v-if="slotProps.message.isPassword" class="flex flex-column gap-3 align-items-center">
-        <div class="flex flex-column gap-2">
-          <div class="font-bold">Room ID<span class="p-error"> *</span></div>
-          <InputText type="text" v-model="value" />
-        </div>
-        <InputOtp v-model="passwordJoin" />
-      </div>
-      <span v-else>{{ slotProps.message.message }}</span>
-    </template>
-  </ConfirmDialog>
+  <ConfirmDialog />
 </template>
 
 <style scoped>
