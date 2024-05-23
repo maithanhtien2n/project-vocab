@@ -25,7 +25,6 @@ const {
 } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const formData = reactive({
-  accountId: userData.value?._id,
   image: null,
   roomName: '',
   description: '',
@@ -108,7 +107,7 @@ const onClickDeleteRoom = (classRoomId) => {
       const res = await onActionDeleteClassRoom(classRoomId)
       if (res.success) {
         await onActionGetClassRoom({
-          data: { accountId: userData.value?._id, type: route.query.type },
+          data: { type: route.query.type },
           noLoading: true
         })
       }
@@ -136,7 +135,7 @@ const onClickJoinRoom = async () => {
 
     if (res.success) {
       await onActionGetClassRoom({
-        data: { accountId: userData.value?._id, type: route.query.type },
+        data: { type: route.query.type },
         noLoading: true
       })
       isShowPopupJoinRoom.value = false
@@ -161,7 +160,7 @@ const onClickJoinRoom = async () => {
 
         if (res.success) {
           await onActionGetClassRoom({
-            data: { accountId: userData.value?._id, type: route.query.type },
+            data: { type: route.query.type },
             noLoading: true
           })
           isShowPopupJoinRoom.value = false
@@ -179,22 +178,23 @@ const onSubmit = handleSubmit(async () => {
   const res = await onActionSaveClassRoom(infoData)
   if (res.success) {
     await onActionGetClassRoom({
-      data: { accountId: userData.value?._id, type: route.query.type },
+      data: { type: route.query.type },
       noLoading: true
     })
     visible.value = false
+    isPassword.value = false
   }
 })
 
 watch(
   () => route.query.type,
   (type) => {
-    onActionGetClassRoom({ data: { accountId: userData.value?._id, type: type } })
+    onActionGetClassRoom({ data: { type: type } })
   }
 )
 
 onMounted(() => {
-  onActionGetClassRoom({ data: { accountId: userData.value?._id, type: route.query.type } })
+  onActionGetClassRoom({ data: { type: route.query.type } })
 })
 </script>
 
@@ -311,7 +311,7 @@ onMounted(() => {
       </div>
 
       <div
-        v-if="!classRoom.length"
+        v-if="!classRoom?.length"
         class="w-full h-23rem flex justify-content-center align-items-center"
       >
         <span> There are no rooms yet.</span>
