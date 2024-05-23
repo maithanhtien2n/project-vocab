@@ -25,7 +25,7 @@ class ApiApp {
 export const API_APP = new ApiApp()
 
 const AxiosInstance = axios.create({
-  baseURL: 'http://localhost:3100/api/v1'
+  baseURL: 'http://14.225.255.121/api/v1'
 })
 
 const updateAuthorizationHeader = (token) => {
