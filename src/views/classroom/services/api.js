@@ -47,6 +47,29 @@ class ApiClassRoom {
       params: { classRoomId }
     })
   }
+
+  getDetailVocabulary = async (id) => {
+    return await AxiosInstance({
+      method: 'GET',
+      url: `vocab/${id}`
+    })
+  }
+
+  saveVocabulary = async (args) => {
+    return await AxiosInstance({
+      method: 'POST',
+      url: `vocab`,
+      data: args
+    })
+  }
+
+  updateVocabulary = async (args) => {
+    return await AxiosInstance({
+      method: 'PUT',
+      url: `vocab/${args.id}`,
+      data: args
+    })
+  }
 }
 
 export const API_CLASS_ROOM = new ApiClassRoom()

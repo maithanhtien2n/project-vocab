@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { accessToken } from '@/utils'
+import { accessToken, onDeleteAppLocalStorage } from '@/utils'
 
 export * as API_CLASS_ROOM from '@/views/classroom/services/api'
 export * as API_PROFILE from '@/views/profile/services/api'
@@ -25,6 +25,7 @@ class ApiApp {
 export const API_APP = new ApiApp()
 
 const AxiosInstance = axios.create({
+  // baseURL: 'http://localhost:3100/api/v1'
   baseURL: 'http://14.225.255.121/api/v1'
 })
 
@@ -37,5 +38,33 @@ const updateAuthorizationHeader = (token) => {
 }
 
 updateAuthorizationHeader(accessToken?.value)
+
+AxiosInstance.interceptors.request.use((config) => {
+  return config
+})
+
+AxiosInstance.interceptors.response.use(
+  (res) => {
+    return res
+  },
+  (error) => {
+    if (
+      [
+        'LOGIN_REQUEST',
+        'LOGIN_EXPIRED',
+        'AUTH_FAILED',
+        'ACCOUNT_IS_LOCKED',
+        'ACCOUNT_REQUIRED',
+        'ACCESS_IS_NOT_ALLOWED'
+      ].includes(error?.response?.data?.statusCode)
+    ) {
+      onDeleteAppLocalStorage()
+    }
+
+    window.scrollTo(0, 0)
+
+    return Promise.reject(error)
+  }
+)
 
 export { AxiosInstance, updateAuthorizationHeader }

@@ -3,6 +3,11 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { lessonEng } from './services/data.js'
 import menuList from '@/components/menuList.vue'
 import vocabularyItem from './components/vocabularyItem.vue'
+import VocabularySetting from './components/VocabularySetting.vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
 
 const lesson = ref(lessonEng)
 
@@ -50,6 +55,10 @@ const handleScroll = () => {
   }
 }
 
+const onClickCreateVocab = () => {
+  router.push({ query: { setting: 'create' } })
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 })
@@ -60,7 +69,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex gap-2 relative">
+  <VocabularySetting v-if="route.query.setting" />
+
+  <div v-else class="flex gap-2 relative">
+    <Button
+      label="Tạo mới"
+      icon="pi pi-plus"
+      class="fixed"
+      style="bottom: 3rem; right: 3rem; z-index: 99999"
+      @click="onClickCreateVocab"
+    />
+
     <div class="relative w-2rem md:w-5rem">
       <menuList :item="lesson" @onClickItemMenu="scrollToLesson" :currentLesson="currentLesson" />
     </div>
