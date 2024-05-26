@@ -1,11 +1,14 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import Overlay from './Overlay.vue'
 import { useRouter } from 'vue-router'
+import { userData } from '@/utils'
+import DialogDelete from './DialogDelete.vue'
 
 import { STORE_CLASS_ROOM } from '@/services/stores'
 
-const { onActionDeleteVocabularyItem } = STORE_CLASS_ROOM.StoreClassRoom()
+const { onActionDeleteVocabularyItem, onGetterMemberList: member } =
+  STORE_CLASS_ROOM.StoreClassRoom()
 
 const router = useRouter()
 
@@ -20,6 +23,10 @@ const emits = defineEmits(['onDeleted'])
 
 const currentUtterance = ref(null)
 const currentWord = ref(null)
+const isOpenDialogConfirm = ref(false)
+const idRoom = ref()
+
+const accountId = computed(() => userData.value._id)
 
 const menuSetting = reactive([
   {
@@ -65,6 +72,19 @@ const highlightText = (example, word) => {
   return highlightedText
 }
 
+const onDeleteRoom = async () => {
+  isOpenDialogConfirm.value = false
+
+  onActionDeleteVocabularyItem(idRoom.value).then(() => {
+    emits('onDeleted')
+  })
+}
+
+const onDialogDelete = async (item) => {
+  isOpenDialogConfirm.value = true
+  idRoom.value = item._id
+}
+
 const onClickOption = (menu, hideOverlay, item) => {
   hideOverlay()
   switch (menu.code) {
@@ -72,9 +92,7 @@ const onClickOption = (menu, hideOverlay, item) => {
       router.push({ query: { setting: item._id } })
       break
     case 'DELETE':
-      onActionDeleteVocabularyItem(item._id).then(() => {
-        emits('onDeleted')
-      })
+      onDialogDelete(item)
       break
   }
 }
@@ -120,12 +138,12 @@ const onClickOption = (menu, hideOverlay, item) => {
       <div class="relative flex gap-2 align-items-center">
         <router-link
           :to="{ name: 'Listening', params: { id: lessonItem._id } }"
-          class="cursor-pointer hover:text-green-600"
+          class="cursor-pointer hover:text-green-600 no-underline text-green-800"
         >
           Bài tập
         </router-link>
 
-        <Overlay>
+        <Overlay v-if="accountId === member?.find((i) => i?.role === 'ROOM_MASTER')._id">
           <template #button="{ showOverlay }">
             <div class="flex cursor-pointer" @click="showOverlay">
               <i class="pi pi-ellipsis-v"></i>
@@ -138,6 +156,7 @@ const onClickOption = (menu, hideOverlay, item) => {
                 v-for="menu in menuSetting"
                 :key="menu.id"
                 class="txt-menu-item"
+                :class="{ 'text-red-600': menu?.code === 'DELETE' }"
                 @click="onClickOption(menu, hideOverlay, lessonItem)"
               >
                 {{ menu?.label }}
@@ -243,6 +262,12 @@ const onClickOption = (menu, hideOverlay, item) => {
       <span>Chưa có từ vựng</span>
     </div>
   </div>
+
+  <DialogDelete
+    :visible="isOpenDialogConfirm"
+    @cancel="isOpenDialogConfirm = false"
+    @delete="onDeleteRoom"
+  />
 </template>
 
 <style scoped>

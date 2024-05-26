@@ -86,6 +86,21 @@ class ApiClassRoom {
       data: { ids: [params] },
     });
   };
+
+  getMemberList = async (params) => {
+    return await AxiosInstance({
+      method: "GET",
+      url: `class-rooms/${params}/get-member`,
+    });
+  };
+
+  updateRoleMember = async (data) => {
+    return await AxiosInstance({
+      method: "PUT",
+      url: `class-rooms/set-role`,
+      data,
+    });
+  };
 }
 
 export const API_CLASS_ROOM = new ApiClassRoom();

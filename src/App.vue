@@ -2,12 +2,12 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppTopBar from './AppTopBar.vue'
-import { onDeleteAppLocalStorage } from '@/utils'
+import { onDeleteAppLocalStorage, zoomOutMenu } from '@/utils'
 
 const router = useRouter()
 const route = useRoute()
 
-const zoomOutMenu = ref(true)
+// const zoomOutMenu = ref(true)
 
 const itemMenu = ref([
   {

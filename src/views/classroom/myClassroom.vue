@@ -249,6 +249,7 @@ onMounted(() => {
       <Button type="button" label="Join" @click="onClickJoinRoom" />
     </template>
   </Dialog>
+
   <div class="p-4">
     <span class="text-2xl font-bold">{{ title }}</span>
     <div class="mt-3 flex gap-3 flex-wrap">

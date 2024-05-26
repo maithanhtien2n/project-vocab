@@ -11,10 +11,12 @@ export const StoreClassRoom = defineStore("StoreClassRoom", () => {
   // State
   const classRooms = ref([]);
   const vocabList = ref();
+  const memberList = ref();
 
   // Getter
   const onGetterClassRooms = computed(() => classRooms);
   const onGetterVocabList = computed(() => vocabList);
+  const onGetterMemberList = computed(() => memberList);
 
   // Action
   const onActionGetClassRoom = async ({ data, noLoading = false }) => {
@@ -67,6 +69,7 @@ export const StoreClassRoom = defineStore("StoreClassRoom", () => {
   const onActionGetVocabularyList = async (params) => {
     const res = await onResponse(API.getVocabularyList(params));
     vocabList.value = res.data;
+
     return res;
   };
 
@@ -76,10 +79,24 @@ export const StoreClassRoom = defineStore("StoreClassRoom", () => {
     return res;
   };
 
+  const onActionGetMemberList = async (params) => {
+    const res = await onResponse(API.getMemberList(params));
+    memberList.value = res.data;
+
+    return res;
+  };
+
+  const onActionUpdateRoleMember = async (data) => {
+    const res = await onResponse(API.updateRoleMember(data));
+
+    return res;
+  };
+
   return {
     // Getter
     onGetterClassRooms,
     onGetterVocabList,
+    onGetterMemberList,
 
     // Action
     onActionGetClassRoom,
@@ -93,5 +110,7 @@ export const StoreClassRoom = defineStore("StoreClassRoom", () => {
     onActionUpdateVocabulary,
     onActionGetVocabularyList,
     onActionDeleteVocabularyItem,
+    onActionGetMemberList,
+    onActionUpdateRoleMember,
   };
 });

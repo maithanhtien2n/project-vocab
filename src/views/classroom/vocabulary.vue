@@ -1,12 +1,11 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { lessonEng } from './services/data.js'
 import menuList from '@/components/menuList.vue'
 import vocabularyItem from './components/vocabularyItem.vue'
 import VocabularySetting from './components/VocabularySetting.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { STORE_CLASS_ROOM } from '@/services/stores'
-import Overlay from './components/Overlay.vue'
+import DialogUser from './DialogUser.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -14,6 +13,7 @@ const route = useRoute()
 const { onGetterVocabList: lesson, onActionGetVocabularyList } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const currentLesson = ref(0)
+const isOpenDialog = ref(false)
 
 const isAllTranslate = computed(() => {
   return lesson.value?.every((lesson) => lesson.isTranslate)
@@ -94,6 +94,18 @@ onBeforeUnmount(() => {
 
     <div class="mt-4 md:mt-7 py-4 md:pt-2 flex-1 pl-2" style="margin-inline: auto">
       <div class="flex flex-column gap-3 mx-0 md:mx-8" style="margin-inline: auto">
+        <div class="flex justify-content-between">
+          <div class="font-semibold text-xl">Danh sách Từ vựng</div>
+
+          <div
+            class="flex gap-2 align-items-center hover:text-green-600 cursor-pointer"
+            @click="isOpenDialog = true"
+          >
+            <i class="pi pi-users"></i>
+            <div>Thành viên</div>
+          </div>
+        </div>
+
         <div class="flex gap-2 align-items-center">
           <i
             @click="onClickIsAll('isTranslate')"
@@ -119,4 +131,6 @@ onBeforeUnmount(() => {
       </div>
     </div>
   </div>
+
+  <DialogUser :visible="isOpenDialog" @cancel="isOpenDialog = false" />
 </template>
