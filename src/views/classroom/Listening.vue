@@ -218,9 +218,9 @@ onMounted(() => {
               ></i>
             </div>
 
-            <div>
+            <!-- <div>
               <span>score: {{ score }}</span>
-            </div>
+            </div> -->
           </div>
 
           <hr class="w-10" />
