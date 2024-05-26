@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import menuList from '@/components/menuList.vue'
 
-const lessonId = ref(2)
+const lessonId = ref(1)
 
 const lessons = ref([
   {
@@ -61,6 +61,14 @@ const lessons = ref([
         translateWord:
           'Người tiêu dùng thường đưa ra quyết định mua hàng dựa trên uy tín, chất lượng của thương hiệu',
         isFavorite: false
+      },
+      {
+        idVocab: 3,
+        word: 'Studied333',
+        translate: 'Đã học333',
+        example: 'I studied Software Engineer at Phu Yen University for 4 years',
+        translateWord: 'Tôi đã học Kỹ sư phần mềm tại Đại học Phú Yên được 4 năm',
+        isFavorite: true
       }
     ]
   },
@@ -124,6 +132,7 @@ const scrollToLesson = (lessonId) => {
 }
 
 const move = () => {
+  console.log('run')
   if (currentVocabIndex.value >= currentLesson.value.vocab.length) {
     currentVocabIndex.value = 0
     currentLessonIndex.value += 1
@@ -146,6 +155,7 @@ const nextStep = () => {
     move()
   }
 }
+const err = ref(null)
 
 const nextVocabStep = () => {
   if (
@@ -164,6 +174,15 @@ const nextVocabStep = () => {
     answer.value = ''
   } else {
     score.value -= 1
+
+    err.value += 1
+    if (err.value > 4) {
+      err.value = null
+
+      currentVocabIndex.value += 1
+      move()
+      answer.value = ''
+    }
   }
 
   // currentVocabIndex.value += 1;
@@ -242,9 +261,15 @@ onMounted(() => {
                   {{ currentLesson.vocab[currentVocabIndex].translate }}
                 </span>
 
-                <div>
+                <div v-if="!err || err <= 3">
                   <InputText v-model="answer" class="text-center" />
                 </div>
+
+                <div v-if="err === 4">
+                  <span>câu trả lời: {{ currentLesson.vocab[currentVocabIndex].word }}</span>
+                </div>
+
+                <span v-if="(err !== null) & (err <= 3)">Sai lần {{ err }}</span>
 
                 <div>
                   <Button @click="nextVocabStep">Tiếp tục</Button>
