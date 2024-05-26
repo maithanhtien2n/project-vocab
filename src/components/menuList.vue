@@ -43,22 +43,22 @@ const onClickItemMenu = (id) => {
 
       <hr class="w-11" />
 
-      <div v-for="(lesson, index) in item" :key="lesson.id" class="flex flex-column">
+      <div v-for="(lesson, index) in item" :key="lesson._id" class="flex flex-column">
         <span
-          @click="onClickItemMenu(lesson.id)"
+          @click="onClickItemMenu(lesson._id)"
           class="hidden md:flex text-sm cursor-pointer hover:text-green-700 transition-duration-200 text-center"
           :class="{
-            'font-bold text-green-700': lesson?.id === currentLessons
+            'font-bold text-green-700': lesson?._id === currentLessons
           }"
         >
           {{ lesson.title }}
         </span>
 
         <span
-          @click="onClickItemMenu(lesson.id)"
+          @click="onClickItemMenu(lesson._id)"
           class="flex-inline md:hidden text-sm cursor-pointer hover:text-green-700 transition-duration-200 text-center"
           :class="{
-            'font-bold text-green-700 text-base': lesson.id === currentLessons
+            'font-bold text-green-700 text-base': lesson._id === currentLessons
           }"
           v-tooltip.right="lesson.title"
         >

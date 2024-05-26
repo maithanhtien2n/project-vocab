@@ -5,11 +5,13 @@ import menuList from '@/components/menuList.vue'
 import vocabularyItem from './components/vocabularyItem.vue'
 import VocabularySetting from './components/VocabularySetting.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { STORE_CLASS_ROOM } from '@/services/stores'
+import Overlay from './components/Overlay.vue'
 
 const router = useRouter()
 const route = useRoute()
 
-const lesson = ref(lessonEng)
+const { onGetterVocabList: lesson, onActionGetVocabularyList } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const currentLesson = ref(0)
 
@@ -59,8 +61,14 @@ const onClickCreateVocab = () => {
   router.push({ query: { setting: 'create' } })
 }
 
+const getVocabularyList = () => {
+  onActionGetVocabularyList({ classRoomId: route.params.id })
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+
+  getVocabularyList()
 })
 
 onBeforeUnmount(() => {
@@ -107,7 +115,7 @@ onBeforeUnmount(() => {
           </i>
         </div>
 
-        <vocabularyItem :lesson="lesson" />
+        <vocabularyItem :lesson="lesson" @onDeleted="getVocabularyList" />
       </div>
     </div>
   </div>

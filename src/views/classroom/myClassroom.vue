@@ -39,6 +39,7 @@ const isPassword = ref(false)
 const popUpType = ref('')
 const classRoomId = ref('')
 const passwordJoin = ref('')
+const showCopied = ref(null)
 
 const schema = Yup.object({
   roomName: Yup.string().required('Please enter the name room'),
@@ -113,6 +114,31 @@ const onClickDeleteRoom = (classRoomId) => {
       }
     }
   })
+}
+
+const onCopyIdRoom = (roomID) => {
+  // Tạo một phần tử input tạm thời
+  const tempInput = document.createElement('input')
+
+  // Thiết lập giá trị của input là nội dung của text
+  tempInput.value = roomID
+
+  // Đưa input vào DOM
+  document.body.appendChild(tempInput)
+
+  // Chọn nội dung của input
+  tempInput.select()
+
+  // Sao chép nội dung đã chọn vào clipboard
+  document.execCommand('copy')
+
+  // Xóa input tạm thời khỏi DOM
+  document.body.removeChild(tempInput)
+
+  showCopied.value = roomID
+  setTimeout(() => {
+    showCopied.value = null
+  }, 500)
 }
 
 const onClickRoomJoin = (classRoomId) => {
@@ -241,7 +267,7 @@ onMounted(() => {
               style="word-break: break-word; overflow-wrap: anywhere"
               @click.stop="onCopyIdRoom(item?._id)"
             >
-              ID room
+              {{ showCopied === item?._id ? 'Copied!' : 'Copy ID' }}
             </span>
           </div>
 

@@ -1,5 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import Overlay from './Overlay.vue'
+import router from '@/services/router'
+import { STORE_CLASS_ROOM } from '@/services/stores'
+
+const { onActionDeleteVocabularyItem } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const props = defineProps({
   lesson: {
@@ -8,8 +13,21 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits(['onDeleted'])
+
 const currentUtterance = ref(null)
 const currentWord = ref(null)
+
+const menuSetting = reactive([
+  {
+    code: 'UPDATE',
+    label: 'Cập nhật'
+  },
+  {
+    code: 'DELETE',
+    label: 'Xóa'
+  }
+])
 
 // Bấm vào để đọc
 const onClickWord = (speakWord) => {
@@ -43,6 +61,20 @@ const highlightText = (example, word) => {
 
   return highlightedText
 }
+
+const onClickOption = (menu, hideOverlay, item) => {
+  hideOverlay()
+  switch (menu.code) {
+    case 'UPDATE':
+      router.push({ query: { setting: item._id } })
+      break
+    case 'DELETE':
+      onActionDeleteVocabularyItem(item._id).then(() => {
+        emits('onDeleted')
+      })
+      break
+  }
+}
 </script>
 
 <template>
@@ -53,37 +85,69 @@ const highlightText = (example, word) => {
     class="w-full shadow-custom flex flex-column gap-2 border-round-md"
   >
     <div
-      class="text-sm md:text-lg font-semibold p-3 md:p-4 bg-green-200 border-round-top-md flex gap-2 align-items-center"
+      class="flex justify-content-between text-sm md:text-lg p-3 md:p-4 bg-green-200 border-round-top-md"
     >
-      <span
-        @click="onClickWord(lessonItem.title)"
-        v-tooltip.top="lessonItem?.translateTitle"
-        class="cursor-pointer text-green-700"
-      >
-        {{ lessonItem.title }}
-      </span>
+      <div class="flex gap-2 align-items-center font-semibold">
+        <span
+          @click="onClickWord(lessonItem.title)"
+          v-tooltip.top="lessonItem?.translateTitle"
+          class="cursor-pointer text-green-700"
+        >
+          {{ lessonItem.title }}
+        </span>
 
-      <span class="text-color-secondary" style="cursor: default">|</span>
+        <span class="text-color-secondary" style="cursor: default">|</span>
 
-      <i
-        @click="lessonItem.isTranslate = !lessonItem.isTranslate"
-        v-tooltip.top="lessonItem.isTranslate ? 'Tắt dịch' : 'Mở dịch'"
-        class="pi pi-language text-cyan-900 cursor-pointer hover:text-green-500 transition-duration-100"
-        :style="!lessonItem.isTranslate ? 'opacity: 0.3' : ''"
-      ></i>
+        <i
+          @click="lessonItem.isTranslate = !lessonItem.isTranslate"
+          v-tooltip.top="lessonItem.isTranslate ? 'Tắt dịch' : 'Mở dịch'"
+          class="pi pi-language text-cyan-900 cursor-pointer hover:text-green-500 transition-duration-100"
+          :style="!lessonItem.isTranslate ? 'opacity: 0.3' : ''"
+        ></i>
 
-      <span class="text-color-secondary" style="cursor: default">|</span>
-      <i
-        @click="lessonItem.isExample = !lessonItem.isExample"
-        v-tooltip.top="lessonItem.isExample ? 'Tắt ví dụ' : 'Mở ví dụ'"
-        class="pi pi-book text-cyan-900 cursor-pointer hover:text-green-500 transition-duration-100"
-        :style="!lessonItem.isExample ? 'opacity: 0.3' : ''"
-      ></i>
+        <span class="text-color-secondary" style="cursor: default">|</span>
+        <i
+          @click="lessonItem.isExample = !lessonItem.isExample"
+          v-tooltip.top="lessonItem.isExample ? 'Tắt ví dụ' : 'Mở ví dụ'"
+          class="pi pi-book text-cyan-900 cursor-pointer hover:text-green-500 transition-duration-100"
+          :style="!lessonItem.isExample ? 'opacity: 0.3' : ''"
+        ></i>
+      </div>
+
+      <div class="relative flex gap-2 align-items-center">
+        <router-link :to="{ name: 'Listening' }" class="cursor-pointer hover:text-green-600"
+          >Bài tập</router-link
+        >
+
+        <Overlay>
+          <template #button="{ showOverlay }">
+            <div class="flex cursor-pointer" @click="showOverlay">
+              <i class="pi pi-ellipsis-v"></i>
+            </div>
+          </template>
+
+          <template #options="{ hideOverlay }">
+            <div class="flex flex-column text-sm md:text-base gap-2 px-3">
+              <div
+                v-for="menu in menuSetting"
+                :key="menu.id"
+                class="txt-menu-item"
+                @click="onClickOption(menu, hideOverlay, lessonItem)"
+              >
+                {{ menu?.label }}
+              </div>
+            </div>
+          </template>
+        </Overlay>
+      </div>
     </div>
 
-    <div class="text-sm md:text-base p-3 md:p-4 border-round-md flex flex-column gap-3 pb-5">
+    <div
+      v-if="lessonItem.vocabItems?.length"
+      class="text-sm md:text-base p-3 md:p-4 border-round-md flex flex-column gap-3 pb-5"
+    >
       <div
-        v-for="(word, index) in lessonItem.vocab"
+        v-for="(word, index) in lessonItem.vocabItems"
         :key="index"
         class="h-full flex flex-column md:flex-row"
       >
@@ -93,7 +157,7 @@ const highlightText = (example, word) => {
               <span
                 @click="onClickWord(word.word)"
                 class="cursor-pointer hover:text-green-500 transition-duration-100 font-semibold"
-                v-tooltip.top="word.translate"
+                v-tooltip.top="word.translateWord"
               >
                 {{ word.word }}
               </span>
@@ -112,7 +176,7 @@ const highlightText = (example, word) => {
             </div>
 
             <div v-if="lessonItem.isTranslate" style="width: 11rem">
-              {{ word.translate }}
+              {{ word.translateWord }}
             </div>
 
             <div
@@ -122,7 +186,7 @@ const highlightText = (example, word) => {
             >
               <span
                 @click="onClickWord(word.example)"
-                v-tooltip.top="word.translateWord"
+                v-tooltip.top="word.translateExample"
                 v-html="highlightText(word.example, word.word)"
                 class="cursor-pointer hover:text-green-500 transition-duration-100"
               ></span>
@@ -153,7 +217,7 @@ const highlightText = (example, word) => {
         >
           <div
             @click="onClickWord(word.example)"
-            v-tooltip.top="word.translateWord"
+            v-tooltip.top="word.translateExample"
             class="cursor-pointer hover:text-green-500 transition-duration-100"
             v-html="'EX: ' + highlightText(word.example, word.word)"
           />
@@ -167,6 +231,10 @@ const highlightText = (example, word) => {
           </div>
         </div>
       </div>
+    </div>
+
+    <div v-else class="text-sm md:text-sm p-2 md:p-3 border-round-md text-center pb-5 text-600">
+      <span>Chưa có từ vựng</span>
     </div>
   </div>
 </template>

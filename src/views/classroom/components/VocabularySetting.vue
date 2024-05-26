@@ -6,8 +6,12 @@ import { STORE_CLASS_ROOM } from '@/services/stores'
 const router = useRouter()
 const route = useRoute()
 
-const { onActionGetDetailVocabulary, onActionSaveVocabulary, onActionUpdateVocabulary } =
-  STORE_CLASS_ROOM.StoreClassRoom()
+const {
+  onActionGetVocabularyList,
+  onActionGetDetailVocabulary,
+  onActionSaveVocabulary,
+  onActionUpdateVocabulary
+} = STORE_CLASS_ROOM.StoreClassRoom()
 
 const vocabItem = {
   word: '',
@@ -15,12 +19,13 @@ const vocabItem = {
   example: '',
   translateExample: ''
 }
+
 const vocabulary = ref({
   title: '',
   translateTitle: '',
   isTranslate: true,
   isExample: true,
-  vocabItems: []
+  vocabItems: [vocabItem]
 })
 
 const data = reactive({
@@ -49,10 +54,12 @@ const onCellEditComplete = (event) => {
 
 const onClickSave = () => {
   if (route.query.setting === 'create') {
-    console.log('tạo')
     onActionSaveVocabulary({
       classRoomId: route.params.id,
       ...vocabulary.value
+    }).then((res) => {
+      router.replace({ query: { setting: res.data._id } })
+      onActionGetVocabularyList({ classRoomId: route.params.id })
     })
   } else {
     onActionUpdateVocabulary({
