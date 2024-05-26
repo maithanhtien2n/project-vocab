@@ -10,7 +10,9 @@ import DialogUser from './DialogUser.vue'
 const router = useRouter()
 const route = useRoute()
 
-const { onGetterVocabList: lesson, onActionGetVocabularyList } = STORE_CLASS_ROOM.StoreClassRoom()
+const { onGetterVocabList, onActionGetVocabularyList } = STORE_CLASS_ROOM.StoreClassRoom()
+
+const lesson = computed(() => onGetterVocabList.value)
 
 const currentLesson = ref(0)
 const isOpenDialog = ref(false)

@@ -66,9 +66,9 @@ const onClickSave = () => {
       id: route.query.setting,
       classRoomId: route.params.id,
       ...vocabulary.value
+    }).then(() => {
+      onActionGetVocabularyList({ classRoomId: route.params.id })
     })
-
-    onActionGetVocabularyList({ classRoomId: route.params.id })
   }
 }
 
@@ -127,7 +127,7 @@ onMounted(() => {
     </div>
 
     <DataTable
-      :paginator="true"
+      :paginator="false"
       :value="vocabulary.vocabItems"
       :first="data.body.pagination.first"
       :rows="data.body.pagination.rows"
