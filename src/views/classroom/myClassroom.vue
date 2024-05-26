@@ -200,6 +200,10 @@ const onClickJoinRoom = async () => {
   }
 }
 
+const onClickOutRoom = (item) => {
+  console.log(item)
+}
+
 const onSubmit = handleSubmit(async () => {
   const res = await onActionSaveClassRoom(infoData)
   if (res.success) {
@@ -329,9 +333,17 @@ onMounted(() => {
             />
 
             <i
+              v-if="route.query.type === 'myClassRoom'"
               class="pi pi-trash on-click hover:text-red-400 transition-duration-100"
               v-tooltip.right="'Xóa phòng'"
               @click.stop="onClickDeleteRoom(item?._id)"
+            />
+
+            <i
+              v-if="route.query.type === 'joinedClassroom'"
+              class="pi pi-reply on-click hover:text-red-400 transition-duration-100"
+              v-tooltip.right="'Rời phòng'"
+              @click.stop="onClickOutRoom(item?._id)"
             />
           </div>
         </div>
