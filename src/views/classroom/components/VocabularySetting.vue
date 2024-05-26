@@ -67,6 +67,8 @@ const onClickSave = () => {
       classRoomId: route.params.id,
       ...vocabulary.value
     })
+
+    onActionGetVocabularyList({ classRoomId: route.params.id })
   }
 }
 

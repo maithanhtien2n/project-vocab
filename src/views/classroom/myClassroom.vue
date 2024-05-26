@@ -273,7 +273,7 @@ onMounted(() => {
 
           <img
             :src="item?.image || '/images/icon-class-room.jpg'"
-            class="w-full h-full border-round-2xl border-noround-right bg-red-200"
+            class="w-full h-full border-round-2xl border-noround-right bg-green-200"
             style="object-fit: cover"
             alt="Lỗi ảnh"
           />

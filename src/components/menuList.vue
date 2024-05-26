@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { object } from 'yup'
 
 const router = useRouter()
 
@@ -10,7 +11,6 @@ const props = defineProps({
     default: null
   },
   currentLesson: {
-    type: Number,
     default: null
   }
 })

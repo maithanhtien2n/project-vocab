@@ -1,10 +1,13 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import Overlay from './Overlay.vue'
-import router from '@/services/router'
+import { useRouter } from 'vue-router'
+
 import { STORE_CLASS_ROOM } from '@/services/stores'
 
 const { onActionDeleteVocabularyItem } = STORE_CLASS_ROOM.StoreClassRoom()
+
+const router = useRouter()
 
 const props = defineProps({
   lesson: {
@@ -81,7 +84,7 @@ const onClickOption = (menu, hideOverlay, item) => {
   <div
     v-for="(lessonItem, indexLesson) in lesson"
     :key="indexLesson"
-    :id="'lesson-' + lessonItem.id"
+    :id="'lesson-' + lessonItem._id"
     class="w-full shadow-custom flex flex-column gap-2 border-round-md"
   >
     <div
@@ -115,9 +118,12 @@ const onClickOption = (menu, hideOverlay, item) => {
       </div>
 
       <div class="relative flex gap-2 align-items-center">
-        <router-link :to="{ name: 'Listening' }" class="cursor-pointer hover:text-green-600"
-          >Bài tập</router-link
+        <router-link
+          :to="{ name: 'Listening', params: { id: lessonItem._id } }"
+          class="cursor-pointer hover:text-green-600"
         >
+          Bài tập
+        </router-link>
 
         <Overlay>
           <template #button="{ showOverlay }">

@@ -1,100 +1,86 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import menuList from '@/components/menuList.vue'
+import { useRoute } from 'vue-router'
 
-const lessonId = ref(1)
+const route = useRoute()
+
+const lessonId = ref(route.params?.id)
 
 const lessons = ref([
   {
-    id: 0,
-    title: 'Lesson 1: Introduction',
-    translateTitle: 'Giới thiệu',
+    _id: '6651644cd78f9ad976e434ff',
+    classRoomId: '66516011d78f9ad976e434be',
+    title: 'aa',
+    translateTitle: 'bb',
     isTranslate: true,
     isExample: true,
-    vocab: [
+    vocabItems: [
       {
-        idVocab: 0,
-        word: 'Work Experience',
-        translate: 'Kinh nghiệm làm việc',
-        example: 'I have 2 years work experience in the IT field',
-        translateWord: 'Tôi có 2 năm kinh nghiệm làm việc trong lĩnh vực CNTT',
-        isFavorite: false
+        word: 'cat',
+        translateWord: 'meo',
+        example: 'tien is cat',
+        translateExample: 'tien la meo',
+        _id: '6651644cd78f9ad976e43500'
       },
       {
-        idVocab: 1,
-        word: 'Studied',
-        translate: 'Đã học',
-        example: 'I studied Software Engineer at Phu Yen University for 4 years',
-        translateWord: 'Tôi đã học Kỹ sư phần mềm tại Đại học Phú Yên được 4 năm',
-        isFavorite: true
+        word: 'word',
+        translateWord: 'Translate word',
+        example: 'Example',
+        translateExample: 'Translate example',
+        _id: '6652b7aad78f9ad976e43917'
       },
       {
-        idVocab: 2,
-        word: 'Studied222',
-        translate: 'Đã học222',
-        example: 'I studied Software Engineer at Phu Yen University for 4 years',
-        translateWord: 'Tôi đã học Kỹ sư phần mềm tại Đại học Phú Yên được 4 năm',
-        isFavorite: true
-      },
-      {
-        idVocab: 3,
-        word: 'Studied333',
-        translate: 'Đã học333',
-        example: 'I studied Software Engineer at Phu Yen University for 4 years',
-        translateWord: 'Tôi đã học Kỹ sư phần mềm tại Đại học Phú Yên được 4 năm',
-        isFavorite: true
+        word: '1',
+        translateWord: '2',
+        example: '3',
+        translateExample: '4',
+        _id: '6652b81ad78f9ad976e43928'
       }
-    ]
+    ],
+    createdAt: '2024-05-25T04:08:44.507Z',
+    updatedAt: '2024-05-26T04:18:34.337Z',
+    __v: 0
   },
   {
-    id: 2,
-    title: 'Lesson 2: Brands',
-    translateTitle: 'Thương hiệu',
+    _id: '66517070d78f9ad976e435c9',
+    classRoomId: '66516011d78f9ad976e434be',
+    title: 'cc',
+    translateTitle: 'cc',
     isTranslate: true,
     isExample: true,
-    vocab: [
+    vocabItems: [
       {
-        word: 'Brands',
-        translate: 'Thương hiệu',
-        example:
-          'Consumers often make purchasing decisions based on the reputation and quality of brands',
-        translateWord:
-          'Người tiêu dùng thường đưa ra quyết định mua hàng dựa trên uy tín, chất lượng của thương hiệu',
-        isFavorite: false
-      },
-      {
-        idVocab: 3,
-        word: 'Studied333',
-        translate: 'Đã học333',
-        example: 'I studied Software Engineer at Phu Yen University for 4 years',
-        translateWord: 'Tôi đã học Kỹ sư phần mềm tại Đại học Phú Yên được 4 năm',
-        isFavorite: true
+        word: 'cc',
+        translateWord: 'cc',
+        example: 'cc',
+        translateExample: 'cc',
+        _id: '66517070d78f9ad976e435ca'
       }
-    ]
+    ],
+    createdAt: '2024-05-25T05:00:32.799Z',
+    updatedAt: '2024-05-25T05:00:32.799Z',
+    __v: 0
   },
   {
-    id: 3,
-    title: 'Lesson 3: Classroom',
-    translateTitle: 'Lớp học',
+    _id: '66517373d78f9ad976e43699',
+    classRoomId: '66516011d78f9ad976e434be',
+    title: 'ss',
+    translateTitle: 'ss',
     isTranslate: true,
     isExample: true,
-    vocab: [
+    vocabItems: [
       {
-        word: 'pencil sharpener',
-        translate: 'cái gọt bút chì',
-        example: 'Laura, can I please borrow your pencil sharpener?',
-        translateWord: 'Laura, cho tôi mượn cái gọt bút chì của bạn được không?',
-        isFavorite: false
-      },
-      {
-        word: 'protractor',
-        translate: 'Thước đo góc',
-        example: 'Use a protractor to set the fully extended blade at 10 degrees off vertical.',
-        translateWord:
-          'Sử dụng thước đo góc để đặt lưỡi dao đã mở rộng hoàn toàn lệch 10 độ theo chiều dọc.',
-        isFavorite: false
+        word: 's',
+        translateWord: 's',
+        example: 's',
+        translateExample: 's',
+        _id: '66517373d78f9ad976e4369a'
       }
-    ]
+    ],
+    createdAt: '2024-05-25T05:13:23.641Z',
+    updatedAt: '2024-05-25T05:13:23.641Z',
+    __v: 0
   }
 ])
 
@@ -107,6 +93,7 @@ const currentLesson = ref(lessons.value[currentLessonIndex.value])
 const currentStep = ref('lessonTitle')
 const score = ref(0)
 const answer = ref('')
+const err = ref(null)
 
 // const shuffle = (arr) => {
 //   return [...arr].sort(() => Math.random() - 0.5);
@@ -121,7 +108,7 @@ const answer = ref('')
 const scrollToLesson = (lessonId) => {
   currentLessonMenu.value = lessonId
 
-  const lessonIndex = lessons.value.findIndex((lesson) => lesson.id === lessonId)
+  const lessonIndex = lessons.value.findIndex((lesson) => lesson._id === lessonId)
 
   if (lessonIndex !== -1) {
     currentLessonIndex.value = lessonIndex
@@ -133,7 +120,7 @@ const scrollToLesson = (lessonId) => {
 
 const move = () => {
   console.log('run')
-  if (currentVocabIndex.value >= currentLesson.value.vocab.length) {
+  if (currentVocabIndex.value >= currentLesson.value?.vocabItems?.length) {
     currentVocabIndex.value = 0
     currentLessonIndex.value += 1
     if (currentLessonIndex.value >= lessons.value.length) {
@@ -141,7 +128,7 @@ const move = () => {
     } else {
       currentLesson.value = lessons.value[currentLessonIndex.value]
       currentStep.value = 'lessonTitle'
-      currentLessonMenu.value = currentLesson.value.id
+      currentLessonMenu.value = currentLesson.value?._id
     }
   }
 }
@@ -155,12 +142,11 @@ const nextStep = () => {
     move()
   }
 }
-const err = ref(null)
 
 const nextVocabStep = () => {
   if (
     answer.value.toLowerCase() ===
-    currentLesson.value.vocab[currentVocabIndex.value].word.toLowerCase()
+    currentLesson.value?.vocabItems[currentVocabIndex.value].word.toLowerCase()
   ) {
     if (isTranslate.value) {
       score.value += 2
@@ -254,11 +240,11 @@ onMounted(() => {
 
             <div v-else-if="currentStep === 'vocab'">
               <div
-                v-if="currentVocabIndex < currentLesson.vocab.length"
+                v-if="currentVocabIndex < currentLesson.vocabItems.length"
                 class="flex flex-column gap-5"
               >
                 <span v-if="isTranslate" class="font-bold text-3xl">
-                  {{ currentLesson.vocab[currentVocabIndex].translate }}
+                  {{ currentLesson.vocabItems[currentVocabIndex].translateWord }}
                 </span>
 
                 <div v-if="!err || err <= 3">
@@ -266,7 +252,7 @@ onMounted(() => {
                 </div>
 
                 <div v-if="err === 4">
-                  <span>câu trả lời: {{ currentLesson.vocab[currentVocabIndex].word }}</span>
+                  <span>câu trả lời: {{ currentLesson.vocabItems[currentVocabIndex].word }}</span>
                 </div>
 
                 <span v-if="(err !== null) & (err <= 3)">Sai lần {{ err }}</span>
