@@ -101,6 +101,17 @@ class ApiClassRoom {
       data,
     });
   };
+
+  leaveMember = async (id, data) => {
+    return await AxiosInstance({
+      method: "PUT",
+      url: `class-rooms/${id}/remove-member`,
+      params: {
+        typeRemove: data.typeRemove,
+        memberInRoomId: data.memberInRoomId,
+      },
+    });
+  };
 }
 
 export const API_CLASS_ROOM = new ApiClassRoom();

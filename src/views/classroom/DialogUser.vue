@@ -11,7 +11,8 @@ const route = useRoute()
 const {
   onGetterMemberList: member,
   onActionGetMemberList,
-  onActionUpdateRoleMember
+  onActionUpdateRoleMember,
+  onActionLeaveMember
 } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const props = defineProps({
@@ -46,6 +47,17 @@ const onChangeRole = (role) => {
     classRoomId: route.params.id,
     memberInRoomId: role?._id,
     isCensor: role?.isCensor
+  }).then(() => {
+    onActionGetMemberList(route.params.id)
+  })
+}
+
+const onClickRemoveMember = (item) => {
+  console.log(item)
+  console.log(route)
+  onActionLeaveMember(route.params.id, {
+    typeRemove: 'REMOVE_MEMBER',
+    memberInRoomId: item._id
   }).then(() => {
     onActionGetMemberList(route.params.id)
   })
@@ -86,21 +98,25 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="cursor-pointer">
-          {{
-            item.role === 'ROOM_MASTER'
-              ? 'Chủ phòng'
-              : item.role === 'MEMBER'
-                ? 'Thành viên'
-                : 'Người kiểm duyệt'
-          }}
+        <div class="flex align-items-center gap-2">
+          <div class="cursor-pointer">
+            {{
+              item.role === 'ROOM_MASTER'
+                ? 'Chủ phòng'
+                : item.role === 'MEMBER'
+                  ? 'Thành viên'
+                  : 'Người kiểm duyệt'
+            }}
+          </div>
+
+          <i
+            v-if="item.role !== 'ROOM_MASTER' && route.query.type === 'myClassRoom'"
+            v-tooltip.top="'Xoá thành viên'"
+            class="pi pi-times cursor-pointer"
+            @click="onClickRemoveMember(item)"
+          ></i>
         </div>
       </div>
     </div>
-
-    <!-- <template #footer>
-      <Button type="button" label="Cancel" severity="secondary" @click="onSubmit" />
-      <Button type="button" label="Join" @click="onCloseDialog" />
-    </template> -->
   </Dialog>
 </template>

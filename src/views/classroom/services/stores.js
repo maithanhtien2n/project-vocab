@@ -92,6 +92,12 @@ export const StoreClassRoom = defineStore("StoreClassRoom", () => {
     return res;
   };
 
+  const onActionLeaveMember = async (params, data) => {
+    const res = await onResponse(API.leaveMember(params, data));
+
+    return res;
+  };
+
   return {
     // Getter
     onGetterClassRooms,
@@ -112,5 +118,6 @@ export const StoreClassRoom = defineStore("StoreClassRoom", () => {
     onActionDeleteVocabularyItem,
     onActionGetMemberList,
     onActionUpdateRoleMember,
+    onActionLeaveMember,
   };
 });

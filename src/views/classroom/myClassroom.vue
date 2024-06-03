@@ -21,7 +21,8 @@ const {
   onActionSaveClassRoom,
   onActionDeleteClassRoom,
   onActionIsPassword,
-  onActionJoinClassRoom
+  onActionJoinClassRoom,
+  onActionLeaveMember
 } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const formData = reactive({
@@ -201,7 +202,12 @@ const onClickJoinRoom = async () => {
 }
 
 const onClickOutRoom = (item) => {
-  console.log(item)
+  onActionLeaveMember(item._id, {
+    typeRemove: 'LEAVE_THE_ROOM',
+    memberInRoomId: item.memberInRoom.find((i) => i.accountId === userData.value?._id)._id
+  }).then(() => {
+    onActionGetClassRoom({ data: { type: route.query.type } })
+  })
 }
 
 const onSubmit = handleSubmit(async () => {
@@ -343,7 +349,7 @@ onMounted(() => {
               v-if="route.query.type === 'joinedClassroom'"
               class="pi pi-reply on-click hover:text-red-400 transition-duration-100"
               v-tooltip.right="'Rời phòng'"
-              @click.stop="onClickOutRoom(item?._id)"
+              @click.stop="onClickOutRoom(item)"
             />
           </div>
         </div>

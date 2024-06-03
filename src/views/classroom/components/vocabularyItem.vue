@@ -143,7 +143,14 @@ const onClickOption = (menu, hideOverlay, item) => {
           Bài tập
         </router-link>
 
-        <Overlay v-if="accountId === member?.find((i) => i?.role === 'ROOM_MASTER')._id">
+        <Overlay
+          v-if="
+            member?.some(
+              (item) =>
+                (item.role === 'CENSOR' || item?.role === 'ROOM_MASTER') && item._id === accountId
+            )
+          "
+        >
           <template #button="{ showOverlay }">
             <div class="flex cursor-pointer" @click="showOverlay">
               <i class="pi pi-ellipsis-v"></i>
