@@ -2,87 +2,13 @@
 import { ref, onMounted } from 'vue'
 import menuList from '@/components/menuList.vue'
 import { useRoute } from 'vue-router'
+import { STORE_CLASS_ROOM } from '@/services/stores'
+
+const { onGetterVocabList: lessons } = STORE_CLASS_ROOM.StoreClassRoom()
 
 const route = useRoute()
 
 const lessonId = ref(route.params?.id)
-
-const lessons = ref([
-  {
-    _id: '6651644cd78f9ad976e434ff',
-    classRoomId: '66516011d78f9ad976e434be',
-    title: 'aa',
-    translateTitle: 'bb',
-    isTranslate: true,
-    isExample: true,
-    vocabItems: [
-      {
-        word: 'cat',
-        translateWord: 'meo',
-        example: 'tien is cat',
-        translateExample: 'tien la meo',
-        _id: '6651644cd78f9ad976e43500'
-      },
-      {
-        word: 'word',
-        translateWord: 'Translate word',
-        example: 'Example',
-        translateExample: 'Translate example',
-        _id: '6652b7aad78f9ad976e43917'
-      },
-      {
-        word: '1',
-        translateWord: '2',
-        example: '3',
-        translateExample: '4',
-        _id: '6652b81ad78f9ad976e43928'
-      }
-    ],
-    createdAt: '2024-05-25T04:08:44.507Z',
-    updatedAt: '2024-05-26T04:18:34.337Z',
-    __v: 0
-  },
-  {
-    _id: '66517070d78f9ad976e435c9',
-    classRoomId: '66516011d78f9ad976e434be',
-    title: 'cc',
-    translateTitle: 'cc',
-    isTranslate: true,
-    isExample: true,
-    vocabItems: [
-      {
-        word: 'cc',
-        translateWord: 'cc',
-        example: 'cc',
-        translateExample: 'cc',
-        _id: '66517070d78f9ad976e435ca'
-      }
-    ],
-    createdAt: '2024-05-25T05:00:32.799Z',
-    updatedAt: '2024-05-25T05:00:32.799Z',
-    __v: 0
-  },
-  {
-    _id: '66517373d78f9ad976e43699',
-    classRoomId: '66516011d78f9ad976e434be',
-    title: 'ss',
-    translateTitle: 'ss',
-    isTranslate: true,
-    isExample: true,
-    vocabItems: [
-      {
-        word: 's',
-        translateWord: 's',
-        example: 's',
-        translateExample: 's',
-        _id: '66517373d78f9ad976e4369a'
-      }
-    ],
-    createdAt: '2024-05-25T05:13:23.641Z',
-    updatedAt: '2024-05-25T05:13:23.641Z',
-    __v: 0
-  }
-])
 
 const isTranslate = ref(true)
 const isListen = ref(true)

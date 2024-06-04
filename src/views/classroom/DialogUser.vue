@@ -1,10 +1,8 @@
 div
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted } from 'vue'
 import { STORE_CLASS_ROOM } from '@/services/stores'
 import { useRoute } from 'vue-router'
-import Overlay from './components/Overlay.vue'
-import { userData } from '@/utils'
 
 const route = useRoute()
 
@@ -28,19 +26,6 @@ const isOpened = computed({
   get: () => props.visible,
   set: () => emits('cancel')
 })
-
-const accountId = computed(() => userData.value._id)
-
-const memberType = reactive([
-  {
-    code: 'MEMBER',
-    label: 'Thành viên'
-  },
-  {
-    code: 'CENSOR',
-    label: 'Kiểm duyệt viên'
-  }
-])
 
 const onChangeRole = (role) => {
   onActionUpdateRoleMember({
@@ -87,10 +72,7 @@ onMounted(() => {
             <div>{{ item.fullName }}</div>
 
             <InputSwitch
-              v-if="
-                item.role !== 'ROOM_MASTER' &&
-                accountId === member?.find((i) => i?.role === 'ROOM_MASTER')._id
-              "
+              v-if="item.role !== 'ROOM_MASTER' && route.query.type === 'myClassRoom'"
               v-model="item.isCensor"
               @change="onChangeRole(item)"
               v-tooltip.top="'Quyền chỉnh sửa'"

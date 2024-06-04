@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import Overlay from './Overlay.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { userData } from '@/utils'
 import DialogDelete from './DialogDelete.vue'
 
@@ -11,8 +11,9 @@ const { onActionDeleteVocabularyItem, onGetterMemberList: member } =
   STORE_CLASS_ROOM.StoreClassRoom()
 
 const router = useRouter()
+const route = useRoute()
 
-const props = defineProps({
+defineProps({
   lesson: {
     type: Array,
     default: null
@@ -145,10 +146,8 @@ const onClickOption = (menu, hideOverlay, item) => {
 
         <Overlay
           v-if="
-            member?.some(
-              (item) =>
-                (item.role === 'CENSOR' || item?.role === 'ROOM_MASTER') && item._id === accountId
-            )
+            member?.some((item) => item.role === 'CENSOR' && item._id === accountId) ||
+            route.query.type === 'myClassRoom'
           "
         >
           <template #button="{ showOverlay }">
