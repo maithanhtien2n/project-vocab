@@ -24,7 +24,7 @@ const router = useRouter()
 
         <Avatar
           v-else
-          :label="userData.email.charAt(0).toUpperCase()"
+          :label="userData?.email?.charAt(0)?.toUpperCase()"
           style="background-color: #dee9fc; color: #1a2551"
           shape="circle"
         />
