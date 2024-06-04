@@ -30,7 +30,7 @@ const isOpened = computed({
 const onChangeRole = (role) => {
   onActionUpdateRoleMember({
     classRoomId: route.params.id,
-    memberInRoomId: role?._id,
+    memberInRoomId: role?.accountId,
     isCensor: role?.isCensor
   }).then(() => {
     onActionGetMemberList(route.params.id)
@@ -38,8 +38,6 @@ const onChangeRole = (role) => {
 }
 
 const onClickRemoveMember = (item) => {
-  console.log(item)
-  console.log(route)
   onActionLeaveMember(route.params.id, {
     typeRemove: 'REMOVE_MEMBER',
     memberInRoomId: item._id
