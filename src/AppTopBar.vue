@@ -24,12 +24,12 @@ const router = useRouter()
 
         <Avatar
           v-else
-          :label="userData?.email?.charAt(0)?.toUpperCase()"
+          :label="userData?.fullName?.charAt(0)?.toUpperCase()"
           style="background-color: #dee9fc; color: #1a2551"
           shape="circle"
         />
 
-        <span class="text-800">{{ userData.email }}</span>
+        <span class="text-800">{{ userData.fullName }}</span>
       </div>
 
       <Button v-else label="Sign In" outlined @click="router.push({ name: 'Login' })" />
