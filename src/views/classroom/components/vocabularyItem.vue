@@ -232,13 +232,13 @@ const onClickOption = (menu, hideOverlay, item) => {
             </div>
           </div>
 
-          <div class="hide">
+          <!-- <div class="hide">
             <i
               @click="word.isFavorite = !word.isFavorite"
               class="cursor-pointer"
               :class="!word.isFavorite ? 'pi pi-heart' : 'pi pi-heart-fill zoomin text-red-500'"
             ></i>
-          </div>
+          </div> -->
         </div>
 
         <div

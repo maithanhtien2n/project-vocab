@@ -53,13 +53,13 @@ const onSubmit = handleSubmit(async () => {
   }
 })
 
-const changePassword = ref({
-  password: null,
-  newPassword: null,
-  confirmPassword: null
-})
+// const changePassword = ref({
+//   password: null,
+//   newPassword: null,
+//   confirmPassword: null
+// })
 
-const passwordVisible = ref(false)
+// const passwordVisible = ref(false)
 
 watch(onGetterUserInfo, (newUserInfo) => {
   resetForm({ values: Object.assign(formData, newUserInfo) })
@@ -140,7 +140,7 @@ onMounted(() => {
         </div>
 
         <!-- Thay đỏi mật khẩu -->
-        <div class="flex gap-5 text-base align-items-center">
+        <!-- <div class="flex gap-5 text-base align-items-center">
           <span class="w-8rem font-semibold">Password</span>
           <Button
             label="Change password"
@@ -148,7 +148,7 @@ onMounted(() => {
             class="h-1 w-8"
             @click="passwordVisible = true"
           />
-        </div>
+        </div> -->
 
         <!-- Save Button -->
         <div class="card flex justify-content-end mt-3">
@@ -168,7 +168,7 @@ onMounted(() => {
   </div>
 
   <!-- Dialog Change Password -->
-  <Dialog
+  <!-- <Dialog
     v-model:visible="passwordVisible"
     modal
     :style="{ width: '30rem' }"
@@ -203,5 +203,5 @@ onMounted(() => {
         <Button label="Save" @click="onClickChangePassword" />
       </div>
     </div>
-  </Dialog>
+  </Dialog> -->
 </template>

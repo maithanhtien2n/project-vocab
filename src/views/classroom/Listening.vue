@@ -126,7 +126,7 @@ onMounted(() => {
       <div class="gap-3 mx-0 md:mx-8" style="margin-inline: auto">
         <div class="shadow-custom border-round-md mx-0 md:mx-8 text-center p-4 flex flex-column">
           <div class="flex justify-content-between mx-0 md:mx-8">
-            <div class="flex gap-2">
+            <!-- <div class="flex gap-2">
               <i
                 @click="isTranslate = !isTranslate"
                 v-tooltip.top="isTranslate ? 'Tắt dịch' : 'Mở dịch'"
@@ -142,14 +142,14 @@ onMounted(() => {
                 class="pi pi-volume-up text-indigo-900 cursor-pointer hover:text-purple-500 transition-duration-100"
                 :style="!isListen ? 'opacity: 0.3' : ''"
               ></i>
-            </div>
+            </div> -->
 
             <!-- <div>
               <span>score: {{ score }}</span>
             </div> -->
           </div>
 
-          <hr class="w-10" />
+          <!-- <hr class="w-10" /> -->
 
           <div class="flex flex-column h-20rem justify-content-center">
             <div v-if="currentStep === 'lessonTitle'" class="flex flex-column gap-2">
