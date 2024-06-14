@@ -204,7 +204,7 @@ const onClickJoinRoom = async () => {
 const onClickOutRoom = (item) => {
   onActionLeaveMember(item._id, {
     typeRemove: 'LEAVE_THE_ROOM',
-    memberInRoomId: userData.value?._id
+    memberInRoomId: item.memberInRoom.find((item) => item.accountId === userData.value?._id)?._id
   }).then(() => {
     onActionGetClassRoom({ data: { type: route.query.type } })
   })
